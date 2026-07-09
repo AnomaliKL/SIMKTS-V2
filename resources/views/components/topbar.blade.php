@@ -52,7 +52,7 @@
              class="absolute right-0 mt-2.5 w-48 bg-slate-900 border border-slate-800 rounded-xl shadow-2xl py-1.5 z-50 overflow-hidden"
              x-cloak>
             
-            <a href="{{ route('profile.edit') }}" 
+            <a href="#" 
                class="flex items-center space-x-2.5 px-4 py-2 text-xs font-semibold text-slate-300 hover:bg-slate-800/60 hover:text-white transition">
                 <span>⚙️</span>
                 <span>Edit Profil</span>

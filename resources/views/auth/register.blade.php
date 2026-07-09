@@ -59,10 +59,12 @@
                     @if ($errors->any())
                         <div class="bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs p-3 rounded-xl space-y-1 animate-shake" role="alert">
                             <div class="font-bold flex items-center space-x-1">
-                                <span>⚠️</span> <span>Gagal mendaftarkan akun:</span>
+                                <span>⚠️</span>
+                                <span>Gagal mendaftarkan akun:</span>
                             </div>
+
                             <ul class="list-disc list-inside text-[11px] text-slate-400 space-y-0.5">
-                                @foreach ($errors->all() habits $error)
+                                @foreach ($errors->all() as $error)
                                     <li>{{ $error }}</li>
                                 @endforeach
                             </ul>
@@ -70,7 +72,7 @@
                     @endif
 
                     @if (!session('status'))
-                        <form action="{{ route('register') }}" method="POST" class="space-y-4">
+                        <form action="{{ route('register.process') }}" method="POST" class="space-y-4">
                             @csrf
 
                             <div class="space-y-1.5">
