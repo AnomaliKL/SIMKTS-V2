@@ -34,10 +34,10 @@
             <div class="w-full lg:w-5/12 bg-slate-950 flex items-center justify-center p-6 sm:p-12 shadow-2xl relative z-10">
                 <div class="w-full max-w-md space-y-6" x-data="{ showPassword: false }">
 
-                    <a href="/" class="text-slate-500 hover:text-blue-400 text-xs font-bold inline-flex items-center space-x-2 transition duration-150 group">
+                    {{-- <a href="/" class="text-slate-500 hover:text-blue-400 text-xs font-bold inline-flex items-center space-x-2 transition duration-150 group">
                         <img src="{{ asset('assets/icon/angle-circle-left.png') }}" class="w-3.5 h-3.5 object-contain opacity-60">
                         <span>Kembali ke Beranda</span>
-                    </a>
+                    </a> --}}
 
                     <div class="space-y-1 pt-2">
                         <div class="flex items-center space-x-2">
@@ -76,7 +76,6 @@
                                 </span>
                                 <input :type="showPassword ? 'text' : 'password'" name="password" required placeholder="••••••"
                                        class="w-full text-xs bg-slate-900 border border-slate-800 rounded-xl pl-9 pr-12 py-3 text-slate-200 focus:outline-none focus:border-blue-500 tracking-wide transition">
-                                
                                 <button type="button" @click="showPassword = !showPassword"
                                         class="absolute inset-y-0 right-0 flex items-center pr-3.5 text-slate-400 hover:text-white transition focus:outline-none text-xs">
                                          <img :src="showPassword ? '{{ asset('assets/icon/eye.png') }}' : '{{ asset('assets/icon/eye-crossed.png') }}'" 
@@ -100,17 +99,20 @@
                                 <span>Masuk Aplikasi</span>
                             </button>
                             
-                            <div class="text-center">
+                            {{-- <div class="text-center">
+                                <span class="text-xs text-slate-500 font-medium">Belum punya akun?</span>
                                 <a href="{{ route('register') }}" class="text-xs text-slate-500 hover:text-blue-400 font-medium transition duration-150">
-                                    Belum punya akun? <span class="underline font-bold">Daftar sekarang di sini</span>
+                                   Daftar sekarang di sini
                                 </a>
-                            </div>
+                            </div> --}}
+                            <div class="text-center mt-4">
+                                    <span class="text-xs text-slate-500 font-medium">Belum punya akun? </span>
+                                    <a href="{{ route('register') }}" class="text-xs text-blue-500 hover:text-blue-400 font-bold transition duration-150 underline">
+                                        Daftar sekarang di sini
+                                    </a>
+                                </div>
                         </div>
                     </form>
-
-                    <div class="text-center pt-6 border-t border-slate-900/60">
-                        <small class="text-[10px] text-slate-600 font-medium">&copy; 2026 SIMKTS — Kontrakan 3 Saudara</small>
-                    </div>
 
                 </div>
             </div>

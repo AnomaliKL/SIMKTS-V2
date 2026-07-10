@@ -33,11 +33,11 @@
 
             <div class="w-full lg:w-5/12 bg-slate-950 flex items-center justify-center p-6 sm:p-12 shadow-2xl relative z-10">
                 <div class="w-full max-w-md space-y-6" x-data="{ showPassword: false }">
-
+{{-- 
                     <a href="/" class="text-slate-500 hover:text-blue-400 text-xs font-bold inline-flex items-center space-x-2 transition duration-150 group">
                         <span class="transform group-hover:-translate-x-1 transition duration-150">⬅️</span>
                         <span>Kembali ke Beranda</span>
-                    </a>
+                    </a> --}}
 
                     <div class="space-y-1 pt-2">
                         <div class="flex items-center space-x-2">
@@ -152,9 +152,9 @@
                         </form>
                     @endif
 
-                    <div class="text-center pt-4 border-t border-slate-900/60">
+                    {{-- <div class="text-center pt-4 border-t border-slate-900/60">
                         <small class="text-[10px] text-slate-600 font-medium">&copy; 2026 SIMKTS — Kontrakan 3 Saudara</small>
-                    </div>
+                    </div> --}}
 
                 </div>
             </div>
