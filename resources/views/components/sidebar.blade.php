@@ -63,7 +63,7 @@
         <span class="sidebar-text truncate" x-show="!isCollapsed" x-transition.opacity>Data Kamar</span>
     </a>
 
-    <a href="/admin/penghuni" 
+    <a href="{{ route('admin.penghuni.index') }}" 
        title="Data Penghuni"
        class="flex items-center rounded-xl text-xs font-semibold tracking-wide transition duration-150 group {{ Request::is('admin/penghuni*') ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20' : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-100' }}"
        :class="isCollapsed ? 'justify-center p-3' : 'space-x-3 px-4 py-3'">
@@ -71,7 +71,7 @@
         <span class="sidebar-text truncate" x-show="!isCollapsed" x-transition.opacity>Data Penghuni</span>
     </a>
 
-    <a href="/admin/booking" 
+    <a href="{{ route('admin.booking.index') }}" 
        title="Booking Masuk"
        class="flex items-center rounded-xl text-xs font-semibold tracking-wide transition duration-150 group {{ Request::is('admin/booking*') ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20' : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-100' }}"
        :class="isCollapsed ? 'justify-center p-3' : 'justify-between px-4 py-3'">

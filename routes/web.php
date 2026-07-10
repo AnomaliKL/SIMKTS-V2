@@ -43,7 +43,10 @@ Route::middleware('auth')->group(function () {
         Route::resource('kamar', KamarController::class)->except(['create','edit','show']);
         Route::resource('penghuni', PenghuniController::class)->except(['create','edit','show']);
         Route::post('penghuni/{id}/checkout',[PenghuniController::class,'checkout'])->name('penghuni.checkout');
-        Route::resource('booking', BookingController::class)->except(['create','edit','show']);
+        Route::get('/booking',[BookingController::class,'index'])->name('booking.index');
+        Route::post('/booking/{id}/accept',[BookingController::class,'accept'])->name('booking.accept');
+        Route::post('/booking/{id}/reject',[BookingController::class,'reject'])->name('booking.reject');
+        Route::delete('/booking/{id}',[BookingController::class,'destroy'])->name('booking.destroy');
         Route::resource('tagihan', TagihanController::class)->except(['create','edit','show']);
         Route::get('/laporan', [LaporanController::class,'index'])->name('laporan');
         Route::get('/pengaturan', [PengaturanController::class,'index'])->name('pengaturan');

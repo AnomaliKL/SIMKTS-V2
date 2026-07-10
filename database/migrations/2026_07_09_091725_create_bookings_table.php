@@ -9,17 +9,47 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('bookings', function (Blueprint $table) {
-            $table->id();
-            $table->string('nama');
-            $table->string('no_hp');
-            $table->unsignedBigInteger('kamar_id')->nullable();
-            $table->date('tanggal_booking');
-            $table->enum('status_booking', [
-                'pending',
-                'diterima',
-                'ditolak'
-            ])->default('pending');
+
+            $table->id('id_booking');
+
+            $table->unsignedBigInteger('id_user');
+
+            $table->unsignedBigInteger('id_kamar');
+
+            $table->string('nama_lengkap');
+
+            $table->string('nik_ktp',20);
+
+            $table->string('no_hp',20);
+
+            $table->string('email');
+
+            $table->dateTime('tgl_pengajuan');
+
+            $table->date('tgl_mulai_kos');
+
+            $table->enum('status_booking',[
+                'Pending',
+                'Diterima',
+                'Ditolak'
+            ])->default('Pending');
+
+            $table->text('catatan')->nullable();
+
             $table->timestamps();
+
+            $table->foreign('id_user')
+                ->references('id')
+                ->on('users')
+                ->cascadeOnUpdate()
+                ->cascadeOnDelete();
+
+            $table->foreign('id_kamar')
+                ->references('id_kamar')
+                ->on('kamars')
+                ->cascadeOnUpdate()
+                ->restrictOnDelete();
+
         });
     }
 
