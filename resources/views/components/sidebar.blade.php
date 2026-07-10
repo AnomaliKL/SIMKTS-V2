@@ -47,7 +47,7 @@
 
         <nav class="mt-4 px-3 space-y-1">
             
-    <a href="/admin" 
+    <a href="{{ route('admin.dashboard') }}" 
        title="Dashboard"
        class="flex items-center rounded-xl text-xs font-semibold tracking-wide transition duration-150 group {{ Request::is('admin') ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20' : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-100' }}"
        :class="isCollapsed ? 'justify-center p-3' : 'space-x-3 px-4 py-3'">
@@ -55,7 +55,7 @@
         <span class="sidebar-text truncate" x-show="!isCollapsed" x-transition.opacity>Dashboard</span>
     </a>
 
-    <a href="/admin/kamar" 
+    <a href="{{ route('admin.kamar.index') }}"
        title="Data Kamar"
        class="flex items-center rounded-xl text-xs font-semibold tracking-wide transition duration-150 group {{ Request::is('admin/kamar*') ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20' : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-100' }}"
        :class="isCollapsed ? 'justify-center p-3' : 'space-x-3 px-4 py-3'">

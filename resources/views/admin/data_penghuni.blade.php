@@ -88,7 +88,7 @@
                 </thead>
                 <tbody class="divide-y divide-slate-800/40 text-xs font-medium">
                     @forelse($penghunis as $row)
-                        <tr x-show="search === '' || '{{ strtolower($row->nama_lengkap . ' ' . $row->nomor_kamar) }}'.includes(search.toLowerCase())"
+                        <tr x-show="search === '' || '{{ strtolower($row->nama_lengkap . ' ' . ($row->kamar->no_kamar ?? '')) }}'.includes(search.toLowerCase())"
                             x-transition.opacity
                             class="hover:bg-slate-800/20 text-slate-200 transition">
                             
@@ -98,7 +98,7 @@
                             
                             <td class="px-5 py-3.5">
                                 <span class="px-2.5 py-0.5 bg-blue-500/10 text-blue-400 border border-blue-500/10 text-[10px] font-bold rounded-md shadow-inner">
-                                    Kamar {{ $row->nomor_kamar }}
+                                    Kamar {{ $row->kamar->no_kamar }}
                                 </span>
                             </td>
                             
@@ -135,12 +135,11 @@
                                             editForm.hp = '{{ $row->no_hp }}';
                                             editForm.email = '{{ $row->email }}';
                                             editForm.id_kamar_lama = '{{ $row->id_kamar }}';
-                                            editForm.nomor_kamar_lama = '{{ $row->nomor_kamar }}';
+                                            editForm.nomor_kamar_lama='{{ $row->kamar->no_kamar }}';
                                             editForm.id_kamar_pilih = '{{ $row->id_kamar }}';
                                             editForm.tanggal_asli = '{{ $row->tgl_masuk }}';
                                             editForm.tanggal_tampil = '{{ $row->tgl_masuk }}';
-                                            showEditModal = true;
-                                        "
+                                            showEditModal = true;"
                                         class="p-2 text-amber-400 hover:text-slate-950 bg-amber-500/10 hover:bg-amber-400 border border-amber-500/20 rounded-xl cursor-pointer transition">
                                     📝
                                 </button>
@@ -206,7 +205,7 @@
                             <select name="id_kamar" required class="w-full text-xs bg-slate-950 border border-slate-800 rounded-xl p-3 text-slate-200 font-bold focus:outline-none focus:border-blue-500 [color-scheme:dark] transition">
                                 <option value="">-- Pilih Kamar Kosong --</option>
                                 <template x-for="k in kamarKosong" :key="k.id_kamar">
-                                    <option :value="k.id_kamar" x-text="`Kamar ${k.nomor_kamar} (Rp ${new Intl.NumberFormat('id-ID').format(k.harga_bulanan)}/bln)`"></option>
+                                    <option :value="k.id_kamar" x-text="`Kamar ${k.no_kamar} (Rp ${new Intl.NumberFormat('id-ID').format(k.harga_sewa)}/bln)`"></option>
                                 </template>
                             </select>
                         </div>
@@ -276,7 +275,7 @@
                                     class="w-full text-xs bg-slate-950 border border-slate-800 rounded-xl p-3 text-slate-200 font-bold focus:outline-none focus:border-blue-500 [color-scheme:dark] transition">
                                 <option :value="editForm.id_kamar_lama" x-text="`Tetap di Kamar ${editForm.nomor_kamar_lama}`"></option>
                                 <template x-for="k in kamarKosong" :key="k.id_kamar">
-                                    <option :value="k.id_kamar" x-text="`Pindah ke ${k.nomor_kamar} (Rp ${new Intl.NumberFormat('id-ID').format(k.harga_bulanan)})`"></option>
+                                    <option :value="k.id_kamar" x-text="`Pindah ke ${k.no_kamar} (Rp ${new Intl.NumberFormat('id-ID').format(k.harga_sewa)})`"></option>
                                 </template>
                             </select>
                         </div>

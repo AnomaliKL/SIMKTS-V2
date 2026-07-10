@@ -12,8 +12,30 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('penghunis', function (Blueprint $table) {
-            $table->id();
+
+            $table->id('id_penghuni');
+
+            // Relasi ke user
+            $table->foreignId('id_user')->constrained('users')->cascadeOnUpdate()->cascadeOnDelete();
+
+            // Relasi ke kamar
+            $table->foreignId('id_kamar')->constrained('kamars', 'id_kamar')->cascadeOnUpdate()->restrictOnDelete();
+
+            $table->string('nama_lengkap');
+            $table->string('nik_ktp', 20)->unique();
+            $table->string('no_hp', 20);
+            $table->string('email')->unique();
+
+            $table->date('tgl_masuk');
+            $table->date('tgl_keluar')->nullable();
+
+            $table->enum('status_huni', [
+                'Aktif',
+                'Keluar'
+            ])->default('Aktif');
+
             $table->timestamps();
+
         });
     }
 

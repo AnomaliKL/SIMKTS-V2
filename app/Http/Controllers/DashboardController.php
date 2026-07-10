@@ -2,16 +2,29 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Kamar;
+use App\Models\Penghuni;
+
 class DashboardController extends Controller
 {
-    public function index()
+    public function admin()
     {
         return view('admin.dashboard', [
-            'totalKamar'      => 0,
-            'kamarKosong'     => 0,
-            'kamarIsi'        => 0,
-            'totalPenghuni'   => 0,
-            'penghuniTerbaru' => collect(),
+            'totalKamar'      => Kamar::count(),
+            'kamarKosong'     => Kamar::where('status_kamar', 'Kosong')->count(),
+            'kamarIsi'        => Kamar::where('status_kamar', 'Terisi')->count(),
+            'totalPenghuni'   => Penghuni::count(),
+            'penghuniTerbaru' => Penghuni::latest()->take(5)->get(),
         ]);
+    }
+
+    public function pengunjung()
+    {
+        return view('pengunjung.dashboard');
+    }
+
+    public function penghuni()
+    {
+        return view('penghuni.dashboard');
     }
 }

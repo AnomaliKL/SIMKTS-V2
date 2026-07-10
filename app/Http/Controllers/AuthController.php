@@ -2,51 +2,66 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
-    // Menampilkan halaman login
+    /**
+     * Menampilkan halaman login
+     */
     public function index()
     {
         return view('auth.login');
     }
 
-    // Proses login
+    /**
+     * Proses login
+     */
     public function login(Request $request)
     {
         $credentials = $request->validate([
-            'email' => ['required', 'email'],
+            'email'    => ['required', 'email'],
             'password' => ['required'],
         ]);
 
-        if (Auth::attempt($credentials, $request->remember)) {
+        if (Auth::attempt($credentials, $request->boolean('remember'))) {
 
             $request->session()->regenerate();
-            return redirect()->route('dashboard');
+
+            // Sementara hanya Admin
+            if (Auth::user()->role === 'admin') {
+                return redirect()->route('admin.dashboard');
+            }
+
+            Auth::logout();
+
+            return redirect()->route('login')
+                ->withErrors([
+                    'email' => 'Akun ini tidak memiliki akses.'
+                ]);
         }
 
-        return back()->withErrors([
-            'email' => 'Email atau password salah.'
-        ])->onlyInput('email');
+        return back()
+            ->withErrors([
+                'email' => 'Email atau password salah.'
+            ])
+            ->onlyInput('email');
     }
 
-    // Logout
-    public function logout(Request $request)
-    {
-        Auth::logout();
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
-        return redirect()->route('login');
-    }
-
+    /**
+     * Halaman Register
+     */
     public function showRegister()
     {
         return view('auth.register');
     }
 
+    /**
+     * Proses Register
+     */
     public function register(Request $request)
     {
         $request->validate([
@@ -59,10 +74,27 @@ class AuthController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'role' => 'mahasiswa'
+
+            // Default user baru
+            'role' => 'pengunjung',
         ]);
 
-        return redirect()->route('login')
-            ->with('success', 'Akun berhasil dibuat. Silakan login.');
+        return redirect()
+            ->route('login')
+            ->with('success', 'Registrasi berhasil. Silakan login.');
+    }
+
+    /**
+     * Logout
+     */
+    public function logout(Request $request)
+    {
+        Auth::logout();
+
+        $request->session()->invalidate();
+
+        $request->session()->regenerateToken();
+
+        return redirect()->route('login');
     }
 }
