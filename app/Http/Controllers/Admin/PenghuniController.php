@@ -33,70 +33,54 @@ class PenghuniController extends Controller
     {
         $request->validate([
             'nama'      => 'required|string|max:100',
-            'nik'       => 'required|digits_between:16,20|unique:penghunis,nik_ktp',
-            'hp'        => 'required|max:20',
+            'nik'       => 'required|unique:penghunis,nik_ktp',
+            'hp'        => 'required',
             'email'     => 'required|email',
             'id_kamar'  => 'required|exists:kamars,id_kamar',
             'tgl_masuk' => 'required|date',
         ]);
 
-        DB::beginTransaction();
+        // Cari user berdasarkan email
+        $user = User::where('email', $request->email)->first();
 
-        try {
+        // Kalau belum ada buat user
+        if (!$user) {
 
-            // Cari user berdasarkan email
-            $user = User::where('email', $request->email)->first();
-
-            // Jika belum ada, buat akun baru
-            if (!$user) {
-
-                $user = User::create([
-                    'name'     => $request->nama,
-                    'email'    => $request->email,
-                    'password' => Hash::make('123456'),
-                    'role'     => 'penghuni',
-                ]);
-
-            } else {
-
-                // Jika sudah ada, ubah menjadi penghuni
-                $user->update([
-                    'name' => $request->nama,
-                    'role' => 'penghuni'
-                ]);
-
-            }
-
-            // Simpan data penghuni
-            Penghuni::create([
-
-                'id_user'       => $user->id,
-                'id_kamar'      => $request->id_kamar,
-                'nama_lengkap'  => $request->nama,
-                'nik_ktp'       => $request->nik,
-                'no_hp'         => $request->hp,
-                'email'         => $request->email,
-                'tgl_masuk'     => $request->tgl_masuk,
-                'status_huni'   => 'Aktif',
-
+            $user = User::create([
+                'name'     => $request->nama,
+                'email'    => $request->email,
+                'password' => bcrypt('123456'),
+                'role'     => 'penghuni',
             ]);
 
-            // Update status kamar
-            Kamar::where('id_kamar', $request->id_kamar)->update([
-                    'status_kamar' => 'Terisi'
-                ]);
+        } else {
 
-            DB::commit();
-
-            return redirect()->route('admin.penghuni.index')->with('success', 'Penghuni berhasil ditambahkan.');
-
-        } catch (\Exception $e) {
-
-            DB::rollBack();
-
-            dd($e->getMessage());
-
+            $user->role = 'penghuni';
+            $user->name = $request->nama;
+            $user->save();
         }
+
+        $penghuni = new Penghuni();
+
+        $penghuni->id_user = $user->id;
+        $penghuni->id_kamar = $request->id_kamar;
+        $penghuni->nama_lengkap = $request->nama;
+        $penghuni->nik_ktp = $request->nik;
+        $penghuni->no_hp = $request->hp;
+        $penghuni->email = $request->email;
+        $penghuni->tgl_masuk = $request->tgl_masuk;
+        $penghuni->status_huni = 'Aktif';
+
+        $penghuni->save();
+
+        Kamar::where('id_kamar', $request->id_kamar)
+            ->update([
+                'status_kamar' => 'Terisi'
+            ]);
+
+        return redirect()
+            ->route('admin.penghuni.index')
+            ->with('success', 'Penghuni berhasil ditambahkan.');
     }
 
     /**
