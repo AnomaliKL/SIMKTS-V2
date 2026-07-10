@@ -25,7 +25,7 @@
                        class="w-full text-xs bg-slate-900 border border-slate-800 rounded-xl pl-9 pr-4 py-2.5 text-slate-200 focus:outline-none focus:border-blue-500 transition">
             </div>
             
-            <button @click="showAddModal = true" 
+            <button @click="showAddModal = true" type="button" 
                     class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl shadow-lg shadow-blue-600/10 flex items-center justify-center space-x-2 transition cursor-pointer text-nowrap">
                 <span>➕</span> <span>Tambah Kamar</span>
             </button>
