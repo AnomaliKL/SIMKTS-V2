@@ -47,69 +47,76 @@
 
         <nav class="mt-4 px-3 space-y-1">
             
-            <a href="/admin" 
-               class="flex items-center px-4 py-3 rounded-xl text-xs font-semibold tracking-wide transition duration-150 group {{ Request::is('admin') ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20' : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-100' }}"
-               :class="isCollapsed ? 'justify-center px-0' : 'space-x-3'" title="Dashboard">
-                <span class="text-sm group-hover:scale-110 transition">📊</span>
-                <span class="sidebar-text" x-show="!isCollapsed" x-transition.opacity>Dashboard</span>
-            </a>
+    <a href="/admin" 
+       title="Dashboard"
+       class="flex items-center rounded-xl text-xs font-semibold tracking-wide transition duration-150 group {{ Request::is('admin') ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20' : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-100' }}"
+       :class="isCollapsed ? 'justify-center p-3' : 'space-x-3 px-4 py-3'">
+        <img src="{{ asset('assets/icon/apps.png') }}" alt="Dashboard" class="w-4 h-4 object-contain opacity-60 group-hover:scale-110 transition duration-150 shrink-0">
+        <span class="sidebar-text truncate" x-show="!isCollapsed" x-transition.opacity>Dashboard</span>
+    </a>
 
-            <a href="/admin/kamar" 
-               class="flex items-center px-4 py-3 rounded-xl text-xs font-semibold tracking-wide transition duration-150 group {{ Request::is('admin/kamar*') ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20' : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-100' }}"
-               :class="isCollapsed ? 'justify-center px-0' : 'space-x-3'" title="Data Kamar">
-                <span class="text-sm group-hover:scale-110 transition">🚪</span>
-                <span class="sidebar-text" x-show="!isCollapsed" x-transition.opacity>Data Kamar</span>
-            </a>
+    <a href="/admin/kamar" 
+       title="Data Kamar"
+       class="flex items-center rounded-xl text-xs font-semibold tracking-wide transition duration-150 group {{ Request::is('admin/kamar*') ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20' : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-100' }}"
+       :class="isCollapsed ? 'justify-center p-3' : 'space-x-3 px-4 py-3'">
+        <img src="{{ asset('assets/icon/door-open.png') }}" alt="Data Kamar" class="w-4 h-4 object-contain opacity-60 group-hover:scale-110 transition duration-150 shrink-0">
+        <span class="sidebar-text truncate" x-show="!isCollapsed" x-transition.opacity>Data Kamar</span>
+    </a>
 
-            <a href="/admin/penghuni" 
-               class="flex items-center px-4 py-3 rounded-xl text-xs font-semibold tracking-wide transition duration-150 group {{ Request::is('admin/penghuni*') ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20' : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-100' }}"
-               :class="isCollapsed ? 'justify-center px-0' : 'space-x-3'" title="Data Penghuni">
-                <span class="text-sm group-hover:scale-110 transition">👥</span>
-                <span class="sidebar-text" x-show="!isCollapsed" x-transition.opacity>Data Penghuni</span>
-            </a>
+    <a href="/admin/penghuni" 
+       title="Data Penghuni"
+       class="flex items-center rounded-xl text-xs font-semibold tracking-wide transition duration-150 group {{ Request::is('admin/penghuni*') ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20' : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-100' }}"
+       :class="isCollapsed ? 'justify-center p-3' : 'space-x-3 px-4 py-3'">
+        <img src="{{ asset('assets/icon/member-search.png') }}" alt="Data Penghuni" class="w-4 h-4 object-contain opacity-60 group-hover:scale-110 transition duration-150 shrink-0">
+        <span class="sidebar-text truncate" x-show="!isCollapsed" x-transition.opacity>Data Penghuni</span>
+    </a>
 
-            <a href="/admin/booking" 
-               class="flex items-center px-4 py-3 rounded-xl text-xs font-semibold tracking-wide transition duration-150 group {{ Request::is('admin/booking*') ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20' : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-100' }}"
-               :class="isCollapsed ? 'justify-center px-0' : 'justify-between space-x-3'" title="Booking Masuk">
-                <div class="flex items-center" :class="isCollapsed ? 'justify-center' : 'space-x-3'">
-                    <span class="text-sm group-hover:scale-110 transition">📥</span>
-                    <span class="sidebar-text" x-show="!isCollapsed" x-transition.opacity>Booking Masuk</span>
-                </div>
-                
-                @php
-                    // Disarankan logic count ini dipindah ke AppServiceProvider komparasi global, atau sementara inject manual
-                    $jmlBooking = \App\Models\Booking::where('status_booking', 'pending')->count();
-                @endphp
-                @if($jmlBooking > 0)
-                    <span class="sidebar-badge px-2 py-0.5 text-[10px] font-bold bg-rose-500 text-white rounded-md shadow-sm" x-show="!isCollapsed">
-                        {{ $jmlBooking }}
-                    </span>
-                @endif
-            </a>
+    <a href="/admin/booking" 
+       title="Booking Masuk"
+       class="flex items-center rounded-xl text-xs font-semibold tracking-wide transition duration-150 group {{ Request::is('admin/booking*') ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20' : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-100' }}"
+       :class="isCollapsed ? 'justify-center p-3' : 'justify-between px-4 py-3'">
+        
+        <div class="flex items-center space-x-3 min-w-0">
+            <img src="{{ asset('assets/icon/reservation-table.png') }}" alt="Booking" class="w-4 h-4 object-contain opacity-60 group-hover:scale-110 transition duration-150 shrink-0">
+            <span class="sidebar-text truncate" x-show="!isCollapsed" x-transition.opacity>Booking Masuk</span>
+        </div>
+        
+        @php
+            $jmlBooking = \App\Models\Booking::where('status_booking', 'pending')->count();
+        @endphp
+        @if($jmlBooking > 0)
+            <span class="px-2 py-0.5 text-[9px] font-black bg-rose-500 text-white rounded-md shadow-sm shrink-0" x-show="!isCollapsed" x-transition.opacity>
+                {{ $jmlBooking }}
+            </span>
+        @endif
+    </a>
 
-            <a href="/admin/tagihan" 
-               class="flex items-center px-4 py-3 rounded-xl text-xs font-semibold tracking-wide transition duration-150 group {{ Request::is('admin/tagihan*') ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20' : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-100' }}"
-               :class="isCollapsed ? 'justify-center px-0' : 'space-x-3'" title="Data Tagihan">
-                <span class="text-sm group-hover:scale-110 transition">💸</span>
-                <span class="sidebar-text" x-show="!isCollapsed" x-transition.opacity>Data Tagihan</span>
-            </a>
+    <a href="/admin/tagihan" 
+       title="Data Tagihan"
+       class="flex items-center rounded-xl text-xs font-semibold tracking-wide transition duration-150 group {{ Request::is('admin/tagihan*') ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20' : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-100' }}"
+       :class="isCollapsed ? 'justify-center p-3' : 'space-x-3 px-4 py-3'">
+        <img src="{{ asset('assets/icon/comments-dollar.png') }}" alt="Data Tagihan" class="w-4 h-4 object-contain opacity-60 group-hover:scale-110 transition duration-150 shrink-0">
+        <span class="sidebar-text truncate" x-show="!isCollapsed" x-transition.opacity>Data Tagihan</span>
+    </a>
 
-            <div class="border-t border-slate-800/60 my-4"></div>
+    <div class="border-t border-slate-800/60 my-4"></div>
 
-            <a href="/admin/setting" 
-               class="flex items-center px-4 py-3 rounded-xl text-xs font-semibold tracking-wide transition duration-150 group {{ Request::is('admin/setting*') ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20' : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-100' }}"
-               :class="isCollapsed ? 'justify-center px-0' : 'space-x-3'" title="Pengaturan">
-                <span class="text-sm group-hover:scale-110 transition">⚙️</span>
-                <span class="sidebar-text" x-show="!isCollapsed" x-transition.opacity>Pengaturan</span>
-            </a>
+    <a href="/admin/setting" 
+       title="Pengaturan"
+       class="flex items-center rounded-xl text-xs font-semibold tracking-wide transition duration-150 group {{ Request::is('admin/setting*') ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20' : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-100' }}"
+       :class="isCollapsed ? 'justify-center p-3' : 'space-x-3 px-4 py-3'">
+        <img src="{{ asset('assets/icon/settings.png') }}" alt="Pengaturan" class="w-4 h-4 object-contain opacity-60 group-hover:scale-110 transition duration-150 shrink-0">
+        <span class="sidebar-text truncate" x-show="!isCollapsed" x-transition.opacity>Pengaturan</span>
+    </a>
 
-            <a href="/admin/laporan" 
-               class="flex items-center px-4 py-3 rounded-xl text-xs font-semibold tracking-wide transition duration-150 group {{ Request::is('admin/laporan*') ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20' : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-100' }}"
-               :class="isCollapsed ? 'justify-center px-0' : 'space-x-3'" title="Laporan">
-                <span class="text-sm group-hover:scale-110 transition">📄</span>
-                <span class="sidebar-text" x-show="!isCollapsed" x-transition.opacity>Laporan</span>
-            </a>
-        </nav>
+    <a href="/admin/laporan" 
+       title="Laporan"
+       class="flex items-center rounded-xl text-xs font-semibold tracking-wide transition duration-150 group {{ Request::is('admin/laporan*') ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20' : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-100' }}"
+       :class="isCollapsed ? 'justify-center p-3' : 'space-x-3 px-4 py-3'">
+        <img src="{{ asset('assets/icon/newspaper.png') }}" alt="Laporan" class="w-4 h-4 object-contain opacity-60 group-hover:scale-110 transition duration-150 shrink-0">
+        <span class="sidebar-text truncate" x-show="!isCollapsed" x-transition.opacity>Laporan</span>
+    </a>
+</nav>
     </div>
 
     <div class="p-4 border-t border-slate-800/60 bg-slate-950/20 text-center" x-show="!isCollapsed" x-transition.opacity>

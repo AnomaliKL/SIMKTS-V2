@@ -20,14 +20,17 @@
 
         <div class="flex flex-col sm:flex-row gap-2 w-full md:w-auto shrink-0">
             <div class="relative w-full sm:w-64">
-                <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-500 text-xs">🔍</span>
+                {{-- <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-500 text-xs">🔍</span> --}}
+                <span class="absolute inset-y-0 left-0 flex items-center pl-3">
+                    <img src="{{ asset('assets/icon/search.png') }}" alt="Search" class="w-3.5 h-3.5 object-contain opacity-50">
+                </span>
                 <input type="text" x-model="search" placeholder="Cari Nomor / Fasilitas..." 
                        class="w-full text-xs bg-slate-900 border border-slate-800 rounded-xl pl-9 pr-4 py-2.5 text-slate-200 focus:outline-none focus:border-blue-500 transition">
             </div>
             
             <button @click="showAddModal = true" type="button" 
                     class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl shadow-lg shadow-blue-600/10 flex items-center justify-center space-x-2 transition cursor-pointer text-nowrap">
-                <span>➕</span> <span>Tambah Kamar</span>
+                <span>Tambah Kamar</span>
             </button>
         </div>
     </div>
@@ -125,7 +128,7 @@
                     @empty
                         <tr>
                             <td colspan="5" class="px-5 py-12 text-center text-slate-500 italic">
-                                📭 Belum ada rekaman inventaris data kamar kos di sistem.
+                                Belum ada rekaman inventaris data kamar kos di sistem.
                             </td>
                         </tr>
                     @endforelse
@@ -169,7 +172,7 @@
                 </div>
                 <div class="flex items-center justify-end space-x-2 pt-3 border-t border-slate-800">
                     <button type="button" @click="showAddModal = false" class="px-4 py-2 text-xs font-semibold text-slate-400 hover:text-white transition">Batal</button>
-                    <button type="submit" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-full shadow-md shadow-blue-600/10 transition">Simpan Kamar 🚀</button>
+                    <button type="submit" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-full shadow-md shadow-blue-600/10 transition">Simpan Kamar</button>
                 </div>
             </form>
         </div>

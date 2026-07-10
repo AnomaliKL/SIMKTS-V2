@@ -43,7 +43,7 @@
         <div class="bg-slate-900 border border-slate-800/60 rounded-2xl p-5 flex flex-col justify-between shadow-sm hover:border-slate-700 transition">
             <div class="flex justify-between items-start">
                 <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">Total Kamar</span>
-                <div class="w-8 h-8 rounded-lg bg-blue-500/10 text-blue-400 flex items-center justify-center text-sm">🏢</div>
+                {{-- <div class="w-8 h-8 rounded-lg bg-blue-500/10 text-blue-400 flex items-center justify-center text-sm">🏢</div> --}}
             </div>
             <h3 class="text-2xl font-black text-white mt-4">{{ $totalKamar }}</h3>
         </div>
@@ -51,7 +51,7 @@
         <div class="bg-slate-900 border border-slate-800/60 rounded-2xl p-5 flex flex-col justify-between shadow-sm hover:border-slate-700 transition">
             <div class="flex justify-between items-start">
                 <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">Tersedia</span>
-                <div class="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-400 flex items-center justify-center text-sm">✅</div>
+                {{-- <div class="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-400 flex items-center justify-center text-sm">✅</div> --}}
             </div>
             <h3 class="text-2xl font-black text-emerald-400 mt-4">{{ $kamarKosong }}</h3>
         </div>
@@ -59,7 +59,7 @@
         <div class="bg-slate-900 border border-slate-800/60 rounded-2xl p-5 flex flex-col justify-between shadow-sm hover:border-slate-700 transition">
             <div class="flex justify-between items-start">
                 <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">Terisi</span>
-                <div class="w-8 h-8 rounded-lg bg-rose-500/10 text-rose-400 flex items-center justify-center text-sm">🚪</div>
+                {{-- <div class="w-8 h-8 rounded-lg bg-rose-500/10 text-rose-400 flex items-center justify-center text-sm">🚪</div> --}}
             </div>
             <h3 class="text-2xl font-black text-rose-400 mt-4">{{ $kamarIsi }}</h3>
         </div>
@@ -67,7 +67,7 @@
         <div class="bg-slate-900 border border-slate-800/60 rounded-2xl p-5 flex flex-col justify-between shadow-sm hover:border-slate-700 transition">
             <div class="flex justify-between items-start">
                 <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">Penghuni Active</span>
-                <div class="w-8 h-8 rounded-lg bg-amber-500/10 text-amber-400 flex items-center justify-center text-sm">👥</div>
+                {{-- <div class="w-8 h-8 rounded-lg bg-amber-500/10 text-amber-400 flex items-center justify-center text-sm">👥</div> --}}
             </div>
             <h3 class="text-2xl font-black text-amber-400 mt-4">{{ $totalPenghuni }}</h3>
         </div>

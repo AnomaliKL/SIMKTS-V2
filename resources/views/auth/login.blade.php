@@ -35,7 +35,7 @@
                 <div class="w-full max-w-md space-y-6" x-data="{ showPassword: false }">
 
                     <a href="/" class="text-slate-500 hover:text-blue-400 text-xs font-bold inline-flex items-center space-x-2 transition duration-150 group">
-                        <span class="transform group-hover:-translate-x-1 transition duration-150">⬅️</span>
+                        <img src="{{ asset('assets/icon/angle-circle-left.png') }}" class="w-3.5 h-3.5 object-contain opacity-60">
                         <span>Kembali ke Beranda</span>
                     </a>
 
@@ -60,7 +60,9 @@
                         <div class="space-y-1.5">
                             <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider">Email Address</label>
                             <div class="relative">
-                                <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-500 text-xs">✉️</span>
+                                <span class="absolute inset-y-0 left-0 flex items-center pl-3">
+                                    <img src="{{ asset('assets/icon/envelope.png') }}" alt="Email Icon" class="w-3.5 h-3.5 object-contain opacity-60">
+                                </span>
                                 <input type="email" name="email" value="{{ old('email') }}" required autofocus placeholder="admin@simkts.com"
                                        class="w-full text-xs bg-slate-900 border border-slate-800 rounded-xl pl-9 pr-4 py-3 text-slate-200 focus:outline-none focus:border-blue-500 transition">
                             </div>
@@ -69,13 +71,17 @@
                         <div class="space-y-1.5">
                             <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider">Password</label>
                             <div class="relative">
-                                <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-500 text-xs">🔒</span>
+                                <span class="absolute inset-y-0 left-0 flex items-center pl-3">
+                                    <img src="{{ asset('assets/icon/access-control.png') }}" alt="Email Icon" class="w-3.5 h-3.5 object-contain opacity-60">
+                                </span>
                                 <input :type="showPassword ? 'text' : 'password'" name="password" required placeholder="••••••"
                                        class="w-full text-xs bg-slate-900 border border-slate-800 rounded-xl pl-9 pr-12 py-3 text-slate-200 focus:outline-none focus:border-blue-500 tracking-wide transition">
                                 
                                 <button type="button" @click="showPassword = !showPassword"
                                         class="absolute inset-y-0 right-0 flex items-center pr-3.5 text-slate-400 hover:text-white transition focus:outline-none text-xs">
-                                    <span x-text="showPassword ? '👁️' : '🕶️'"></span>
+                                         <img :src="showPassword ? '{{ asset('assets/icon/eye.png') }}' : '{{ asset('assets/icon/eye-crossed.png') }}'" 
+                                             alt="Toggle Password" 
+                                             class="w-4 h-4 object-contain opacity-60 hover:opacity-100 transition duration-150">
                                 </button>
                             </div>
                         </div>
@@ -91,7 +97,7 @@
                         <div class="space-y-3 pt-3">
                             <button type="submit" 
                                     class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-full tracking-wide shadow-xl shadow-blue-600/10 transition duration-200 cursor-pointer uppercase flex items-center justify-center space-x-2">
-                                <span>Masuk Aplikasi</span> <span>➡️</span>
+                                <span>Masuk Aplikasi</span>
                             </button>
                             
                             <div class="text-center">
