@@ -41,4 +41,13 @@ class Penghuni extends Model
             'id_kamar'
         );
     }
+
+    public function tagihans()
+    {
+        return $this->hasMany(
+            Tagihan::class,
+            'id_penghuni',
+            'id_penghuni'
+        );
+    }
 }

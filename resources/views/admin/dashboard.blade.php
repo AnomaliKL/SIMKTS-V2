@@ -14,8 +14,7 @@
         </div>
         
         <div class="bg-gradient-to-br from-blue-600 to-indigo-700 rounded-2xl p-4 shadow-xl relative overflow-hidden group select-none"
-             x-data="{ 
-                 time: '',
+             x-data="{ time: '',
                  init() {
                      const update = () => {
                          const now = new Date();

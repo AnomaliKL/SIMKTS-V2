@@ -20,7 +20,7 @@
             @csrf
             <button type="button" id="btnGenerate"
                     class="w-full md:w-auto px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-full shadow-lg shadow-blue-600/10 flex items-center justify-center space-x-2 transition cursor-pointer text-nowrap">
-                <span>🪄</span> <span>Generate Tagihan Massal</span>
+                <span>🪄</span> <span>Generate Tagihan</span>
             </button>
         </form>
     </div>
@@ -187,7 +187,7 @@
             btnGen.addEventListener('click', () => {
                 Swal.fire({
                     title: 'Generate Tagihan Massal?',
-                    text: "Sistem otomatis memetakan beban tarif sewa bulanan baru ke seluruh kamar yang berstatus aktif untuk periode saat ini.",
+                    text: "Sistem akan membuat tagihan bulan ini untuk semua penghuni aktif.",
                     icon: 'question',
                     showCancelButton: true,
                     confirmButtonColor: '#3b82f6',
@@ -207,8 +207,8 @@
             if(actValidate) {
                 e.preventDefault();
                 Swal.fire({
-                    title: 'Validasi Pembayaran Lunas?',
-                    text: "Konfirmasi mutasi dana telah sah masuk rekening. Status berganti menjadi Lunas.",
+                    title: 'Validasi Pembayaran?',
+                    text: "Bukti Pembayaran Valid.",
                     icon: 'warning',
                     showCancelButton: true,
                     confirmButtonColor: '#10b981',
@@ -226,7 +226,7 @@
                 e.preventDefault();
                 Swal.fire({
                     title: 'Tolak Berkas Bukti?',
-                    text: "Bukti transfer akan dihapus dari sistem, status tagihan diturunkan kembali menjadi Belum Bayar.",
+                    text: "Bukti transfer tidak valid",
                     icon: 'error',
                     showCancelButton: true,
                     confirmButtonColor: '#ef4444',

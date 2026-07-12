@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Booking Kamar - SIMKTS</title>
+    <title>Welcome to SIMKTS</title>
     
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
@@ -125,16 +125,55 @@
 
                     <div class="p-5 pt-0 mt-auto">
                         @if($status === 'kosong')
-                            @auth
-                                <button @click="showModal = true; selectedId = '{{ $kamar->id_kamar }}'; selectedNomor = '{{ $kamar->no_kamar }}'"
-                                        class="w-full py-2.5 bg-slate-950 hover:bg-blue-600 text-slate-300 hover:text-white border border-slate-800 hover:border-blue-500 text-xs font-bold rounded-xl shadow-sm transition duration-200 cursor-pointer text-center">
-                                    Booking Sekarang
-                                </button>
-                            @else
-                                <a href="/login" class="block w-full py-2.5 bg-slate-950 hover:bg-blue-600 text-slate-300 hover:text-white border border-slate-800 hover:border-blue-500 text-xs font-bold rounded-xl shadow-sm transition duration-200 text-center">
+
+                            @guest
+                                <a href="{{ route('login') }}"
+                                class="block w-full py-2.5 bg-slate-950 hover:bg-blue-600 text-slate-300 hover:text-white border border-slate-800 hover:border-blue-500 text-xs font-bold rounded-xl shadow-sm transition duration-200 text-center">
                                     Booking Sekarang
                                 </a>
+                            @endguest
+
+                            @auth
+
+                                {{-- Pengunjung boleh booking --}}
+                                @if(Auth::user()->role == 'pengunjung')
+
+                                    <button
+                                        @click="showModal = true; selectedId='{{ $kamar->id_kamar }}'; selectedNomor='{{ $kamar->no_kamar }}'"
+                                        class="w-full py-2.5 bg-slate-950 hover:bg-blue-600 text-slate-300 hover:text-white border border-slate-800 hover:border-blue-500 text-xs font-bold rounded-xl shadow-sm transition duration-200">
+
+                                        Booking Sekarang
+
+                                    </button>
+
+                                @endif
+
+                                {{-- Penghuni tidak boleh booking lagi --}}
+                                @if(Auth::user()->role == 'penghuni')
+
+                                    <a href="{{ route('penghuni.dashboard') }}"
+                                    class="block w-full py-2.5 bg-emerald-600 text-white rounded-xl text-center">
+
+                                        Dashboard Penghuni
+
+                                    </a>
+
+                                @endif
+
+                                {{-- Admin --}}
+                                @if(Auth::user()->role == 'admin')
+
+                                    <a href="{{ route('admin.dashboard') }}"
+                                    class="block w-full py-2.5 bg-blue-600 text-white rounded-xl text-center">
+
+                                        Dashboard Admin
+
+                                    </a>
+
+                                @endif
+
                             @endauth
+
                         @else
                             <button disabled class="w-full py-2.5 bg-slate-950 text-slate-600 border border-slate-900 text-xs font-bold rounded-xl cursor-not-allowed text-center">
                                 Sudah Terisi
@@ -161,22 +200,28 @@
                 <button @click="showModal = false" class="text-slate-400 hover:text-white text-lg font-bold">&times;</button>
             </div>
 
-            <form action="{{ route('member.booking.store') }}" method="POST" class="space-y-4">
+            <form action="{{ route('pengunjung.booking.store') }}" method="POST" class="space-y-4">
                 @csrf
-                <input type="hidden" name="id_kamar" :value={selectedId}>
-
+                <input type="hidden" name="id_kamar" :value="selectedId">
+                
                 <p class="text-xs text-slate-400 leading-relaxed">
                     Halo <strong>{{ Auth::user()->name }}</strong>, silakan lengkapi parameter berkas berikut untuk mengajukan sewa kontrakan.
                 </p>
 
                 <div>
                     <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">Tanggal Mulai Ngekos</label>
-                    <input type="date" name="tgl_mulai_kos" required class="w-full text-xs bg-slate-950 border border-slate-800 rounded-xl p-3 text-slate-200 focus:outline-none focus:border-blue-500 [color-scheme:dark] transition">
+                    <input type="date" name="tgl_masuk" required class="w-full text-xs bg-slate-950 border border-slate-800 rounded-xl p-3 text-slate-200 focus:outline-none focus:border-blue-500 [color-scheme:dark] transition">
+                </div>
+
+                <div>
+                    <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">Lama Sewa (Bulan)</label>
+                    <input type="number" name="lama_sewa" min="1" max="60" required placeholder="Contoh: 12" class="w-full text-xs bg-slate-950 border border-slate-800 rounded-xl p-3 text-slate-200 focus:outline-none focus:border-blue-500 transition">
+                    <span class="text-[10px] text-slate-500 block mt-1">Masukkan lama sewa dalam satuan bulan (minimal 1 bulan).</span>
                 </div>
 
                 <div>
                     <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">Nomor NIK KTP (16 Digit)</label>
-                    <input type="number" name="nik_ktp" required placeholder="Masukan 16 Digit NIK KTP Anda" class="w-full text-xs bg-slate-950 border border-slate-800 rounded-xl p-3 text-slate-200 focus:outline-none focus:border-blue-500 transition">
+                    <input type="number" name="nik_ktp" required placeholder="Masukan NIK KTP Anda" class="w-full text-xs bg-slate-950 border border-slate-800 rounded-xl p-3 text-slate-200 focus:outline-none focus:border-blue-500 transition">
                     <span class="text-[10px] text-slate-500 block mt-1">Data NIK sah digunakan petugas untuk memvalidasi kartu identitas.</span>
                 </div>
 
@@ -188,6 +233,24 @@
         </div>
     </div>
     @endauth
+
+    @if(session('booking_success'))
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+
+        Swal.fire({
+            icon: 'success',
+            title: 'Info Booking',
+            text: '{{ session("booking_success") }}',
+            confirmButtonText: 'OK',
+            confirmButtonColor: '#2563eb',
+            background: '#1e293b',
+            color: '#fff'
+        });
+
+    });
+    </script>
+    @endif
 
 </body>
 </html>

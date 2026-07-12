@@ -46,10 +46,14 @@
                             </td>
 
                             <td class="px-5 py-3.5">
-                                <div class="font-bold text-slate-200 tracking-tight">{{ $row->nama_lengkap }}</div>
-                                <a href="https://wa.me/{{ $row->no_hp }}" target="_blank" 
-                                   class="text-[10px] text-emerald-400 hover:underline inline-flex items-center space-x-1 mt-0.5 font-semibold">
-                                    <span>💬</span> <span>{{ $row->no_hp }}</span>
+                                <div class="font-bold text-slate-200 tracking-tight">
+                                    {{ $row->user->name }}
+                                </div>
+
+                                <a href="https://wa.me/{{ $row->user->no_hp }}" target="_blank"
+                                class="text-[10px] text-emerald-400 hover:underline inline-flex items-center space-x-1 mt-0.5 font-semibold">
+                                    <span>💬</span>
+                                    <span>{{ $row->user->no_hp }}</span>
                                 </a>
                             </td>
 
@@ -68,7 +72,7 @@
                             </td>
 
                             <td class="px-5 py-3.5 text-center space-y-1 sm:space-y-0 sm:space-x-1.5 flex flex-col sm:flex-row justify-center items-center">
-                                <form action="{{ route('admin.booking.accept', $row->id_booking) }}" method="POST" class="inline">
+                                <form action="{{ route('admin.booking.approve', $row->id_booking) }}" method="POST" class="inline">
                                     @csrf
                                     <button type="button" class="btn-terima text-[10px] font-bold bg-emerald-500/10 hover:bg-emerald-500 text-emerald-400 hover:text-white border border-emerald-500/20 px-3 py-1.5 rounded-full cursor-pointer transition duration-150">
                                         ✓ Terima
@@ -105,7 +109,7 @@
             e.preventDefault();
             Swal.fire({
                 title: 'Terima Booking?',
-                text: "Pemohon otomatis beralih menjadi penghuni aktif, status kamar terisi, dan tagihan bulan pertama akan dikunci.",
+                text: "Pemohon akan menjadi penghuni aktif dan tagihan bulan pertama akan dibuat.",
                 icon: 'question',
                 showCancelButton: true,
                 confirmButtonColor: '#10b981', // Emerald-500
@@ -128,7 +132,7 @@
             e.preventDefault();
             Swal.fire({
                 title: 'Tolak Permintaan Sewa?',
-                text: "Status pemesanan kamar ini akan digagalkan permanen oleh sistem.",
+                text: "Permintaan Sewa Akan Dibatalkan.",
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#ef4444', // Rose-500

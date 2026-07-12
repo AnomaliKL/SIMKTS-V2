@@ -18,10 +18,6 @@ class DashboardController extends Controller
         ]);
     }
 
-    public function pengunjung()
-    {
-        return view('pengunjung.dashboard');
-    }
 
     public function penghuni()
     {

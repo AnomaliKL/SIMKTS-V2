@@ -10,7 +10,7 @@
     </div>
 
     <div class="bg-slate-900 border border-slate-800/60 rounded-2xl p-4 shadow-sm">
-        <form action="" method="GET" class="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+       <form action="{{ route('admin.laporan') }}" method="GET" class="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
             <div class="w-full sm:max-w-xs">
                 <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">Pilih Periode Bulan</label>
                 <input type="month" name="bulan" value="{{ $bulan_ini }}" onchange="this.form.submit()"
@@ -18,10 +18,8 @@
             </div>
             
             <div>
-                <a href="{{ route('admin.laporan.cetak', ['bulan' => $bulan_ini]) }}" 
-                   class="w-full sm:w-auto inline-flex items-center justify-center space-x-2 px-5 py-3 bg-amber-500 hover:bg-amber-600 text-slate-950 text-xs font-black rounded-xl transition shadow-md shadow-amber-500/10 cursor-pointer">
-                    <span>🖨️</span>
-                    <span>Cetak Laporan PDF</span>
+                <a href="{{ route('admin.laporan.cetak', ['bulan' => $bulan_ini]) }}" target="_blank"  class="w-full sm:w-auto inline-flex items-center justify-center space-x-2 px-5 py-3 bg-amber-500 hover:bg-amber-600 text-slate-950 text-xs font-black rounded-xl transition shadow-md shadow-amber-500/10 cursor-pointer">
+                    🖨️ Cetak Laporan PDF
                 </a>
             </div>
         </form>
@@ -83,11 +81,11 @@
                         <tr class="hover:bg-slate-800/20 text-slate-200 transition">
                             <td class="px-5 py-3.5">
                                 <span class="px-2.5 py-0.5 bg-slate-800 border border-slate-700 text-slate-300 text-[10px] font-bold rounded-md shadow-inner">
-                                    Kamar {{ $row->nomor_kamar }}
+                                    Kamar {{ $row->penghuni->kamar->no_kamar }}
                                 </span>
                             </td>
                             <td class="px-5 py-3.5 font-bold tracking-tight text-slate-200">
-                                {{ $row->nama_lengkap }}
+                                {{ $row->penghuni->nama_lengkap }}
                             </td>
                             <td class="px-5 py-3.5 text-slate-500 text-[11px]">
                                 {{ \Carbon\Carbon::parse($row->tgl_jatuh_tempo)->isoFormat('DD MMM YYYY') }}

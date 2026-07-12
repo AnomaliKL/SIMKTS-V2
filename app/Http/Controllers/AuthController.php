@@ -29,20 +29,29 @@ class AuthController extends Controller
 
         if (Auth::attempt($credentials, $request->boolean('remember'))) {
 
-            $request->session()->regenerate();
+        $request->session()->regenerate();
+        switch (Auth::user()->role) {
 
-            // Sementara hanya Admin
-            if (Auth::user()->role === 'admin') {
+            case 'admin':
                 return redirect()->route('admin.dashboard');
-            }
 
-            Auth::logout();
+            case 'pengunjung':
+                return redirect()->route('home');
 
-            return redirect()->route('login')
-                ->withErrors([
-                    'email' => 'Akun ini tidak memiliki akses.'
-                ]);
+            case 'penghuni':
+                return redirect()->route('penghuni.dashboard');
+
+            default:
+
+                Auth::logout();
+
+                return redirect()
+                    ->route('login')
+                    ->withErrors([
+                        'email' => 'Role akun tidak dikenali.'
+                    ]);
         }
+    }
 
         return back()
             ->withErrors([
@@ -65,23 +74,26 @@ class AuthController extends Controller
     public function register(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|max:100',
-            'email' => 'required|email|unique:users,email',
-            'password' => 'required|min:8|confirmed',
+            'name'      => 'required|string|max:100',
+            'email'     => 'required|email|unique:users,email',
+            'no_hp'     => 'required|max:20',
+            'password'  => 'required|min:6|confirmed',
+        ],[
+            'email.unique' => 'Email sudah digunakan.',
+            'password.confirmed' => 'Konfirmasi password tidak sesuai.',
         ]);
 
         User::create([
-            'name' => $request->name,
-            'email' => $request->email,
+            'name'     => $request->name,
+            'email'    => $request->email,
+            'no_hp'    => $request->no_hp,
             'password' => Hash::make($request->password),
-
-            // Default user baru
-            'role' => 'pengunjung',
+            'role'     => 'pengunjung',
         ]);
 
         return redirect()
-            ->route('login')
-            ->with('success', 'Registrasi berhasil. Silakan login.');
+            ->route('register')
+            ->with('success', 'Akun Berhasil Dibuat!');
     }
 
     /**
@@ -90,11 +102,8 @@ class AuthController extends Controller
     public function logout(Request $request)
     {
         Auth::logout();
-
         $request->session()->invalidate();
-
         $request->session()->regenerateToken();
-
         return redirect()->route('login');
     }
 }

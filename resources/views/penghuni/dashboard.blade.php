@@ -107,7 +107,7 @@
                 </div>
                 <div class="leading-tight">
                     <h5 class="text-base font-black text-white tracking-tight">{{ Auth::user()->name }}</h5>
-                    <span class="text-[11px] text-slate-500 font-medium">Penghuni Kamar {{ $penghuni->nomor_kamar }}</span>
+                    <span class="text-[11px] text-slate-500 font-medium">Penghuni Kamar {{ $penghuni->no_kamar }}</span>
                 </div>
                 <div class="pt-2">
                     <button @click="showProfileModal = true" 
@@ -120,18 +120,32 @@
             <div class="md:col-span-2 bg-slate-900 border border-slate-800/60 rounded-2xl p-6 flex flex-col justify-between h-full shadow-sm">
                 <div class="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4">
                     <div class="space-y-1">
-                        <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Kamar Hunian Saya</span>
-                        <h1 class="text-5xl font-black text-blue-500 tracking-tighter">No. {{ $penghuni->nomor_kamar }}</h1>
-                    </div>
-                    <div class="sm:text-right leading-tight">
-                        <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">Harga Sewa Bulanan</span>
-                        <h3 class="text-xl font-black text-emerald-400 font-mono mt-1">Rp {{ number_format($penghuni->harga_bulanan, 0, ',', '.') }}</h3>
-                        <small class="text-[10px] text-slate-500 font-medium block mt-0.5">/ Siklus Bulan Berjalan</small>
-                    </div>
-                </div>
+                            <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">
+                                Kamar Hunian Saya
+                            </span>
 
+                            <h1 class="text-5xl font-black text-blue-500 tracking-tighter">
+                                No. {{ $penghuni->kamar->no_kamar ?? '-' }}
+                            </h1>
+                        </div>
+
+                        <div class="sm:text-right leading-tight">
+
+                            <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">
+                                Harga Sewa Bulanan
+                            </span>
+
+                            <h3 class="text-xl font-black text-emerald-400 font-mono mt-1">
+                                Rp {{ number_format($penghuni->kamar->harga_sewa ?? 0, 0, ',', '.') }}
+                            </h3>
+
+                            <small class="text-[10px] text-slate-500 font-medium block mt-0.5">
+                                / Bulan
+                            </small>
+                        </div>
+                    </div>
                 <div class="pt-6 border-t border-slate-800/60 mt-6">
-                    <a href="https://wa.me/{{ $wa_admin }}?text=Halo%20Admin,%20saya%20penghuni%20{{ urlencode(Auth::user()->name) }}%20dari%20Kamar%20{{ $penghuni->nomor_kamar }}%20ingin%20bertanya..." 
+                    <a href="https://wa.me/{{ $wa_admin }}?text=Halo%20Admin,%20saya%20penghuni%20{{ urlencode(Auth::user()->name) }}%20dari%20Kamar%20{{ $penghuni->no_kamar }}%20ingin%20bertanya..." 
                        target="_blank" 
                        class="w-full inline-flex items-center justify-center space-x-2 px-5 py-3 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl transition shadow-md shadow-emerald-600/10 cursor-pointer">
                         <span>💬</span>
@@ -170,7 +184,7 @@
                                 </td>
                                 <td class="px-5 py-3.5 font-mono text-slate-200 font-extrabold">
                                     Rp {{ number_format($row->jumlah_tagihan, 0, ',', '.') }}
-                                end
+                               
                                 </td>
                                 <td class="px-5 py-3.5">
                                     @if($status === 'lunas')
@@ -214,35 +228,83 @@
     </main>
 
     <div x-show="showUploadModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm" x-cloak x-transition>
-        <div @click.away="showUploadModal = false" class="bg-slate-900 border border-slate-800 w-full max-w-md rounded-2xl overflow-hidden shadow-2xl p-6 space-y-4">
-            <div class="flex justify-between items-center border-b border-slate-800 pb-2.5">
-                <h5 class="text-sm font-extrabold text-white">Upload Bukti Transfer</h5>
-                <button @click="showUploadModal = false" class="text-slate-400 hover:text-white font-bold text-lg">&times;</button>
+
+        <div @click.away="showUploadModal = false" class="bg-slate-800 border border-slate-700 w-full max-w-md rounded-xl overflow-hidden shadow-2xl">
+
+            {{-- Header --}}
+            <div class="px-6 py-4 border-b border-slate-700 flex items-center justify-between">
+                <h4 class="text-xl font-black text-white">
+                    Upload Bukti Transfer
+                </h4>
+
+                <button @click="showUploadModal=false" class="text-slate-400 hover:text-white text-2xl leading-none">
+                    &times;
+                </button>
             </div>
-            
-            <form action="{{ route('penghuni.tagihan.upload') }}" method="POST" enctype="multipart/form-data" class="space-y-4">
+
+            {{-- Form --}}
+            <form action="{{ route('penghuni.tagihan.upload') }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 <input type="hidden" name="id_tagihan" :value="uploadData.id">
-                
-                <p class="text-xs font-semibold text-slate-400">Pembayaran untuk periode: <span x-text="uploadData.bulan" class="text-blue-400 font-extrabold"></span></p>
-                
-                <div class="bg-slate-950/60 border border-slate-800 rounded-xl p-4 text-center space-y-1">
-                    <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">Silakan Transfer ke Rekening:</span>
-                    <h4 class="text-base font-black text-white uppercase tracking-tight">{{ $bank->nama_bank }}</h4>
-                    <h3 class="text-xl font-mono font-black text-blue-400 select-all tracking-wide py-0.5">{{ $bank->no_rekening }}</h3>
-                    <p class="text-xs text-slate-400 font-semibold italic">a.n {{ $bank->atas_nama }}</p>
+                <div class="p-6 space-y-5">
+                    <div>
+                        <p class="text-sm text-slate-400">
+                            Pembayaran untuk periode:
+                            <span class="font-bold text-blue-400"
+                                x-text="uploadData.bulan">
+                            </span>
+                        </p>
+                    </div>
+
+                    {{-- Rekening --}}
+                    <div class="bg-slate-900 border border-slate-700 rounded-lg p-6 text-center">
+                        <p class="text-sm text-slate-500">
+                            Silakan Transfer ke:
+                        </p>
+
+                        <h2 class="text-2xl font-black text-white mt-2">
+                            {{ $bank->nama_bank }}
+                        </h2>
+
+                        <h3 class="text-2xl font-black text-blue-500 mt-2">
+                            {{ $bank->no_rekening }}
+                        </h3>
+
+                        <p class="text-sm text-slate-400 mt-2">
+                            a.n {{ $bank->atas_nama }}
+                        </p>
+                    </div>
+
+                    {{-- Upload --}}
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-400 mb-2">
+                            Foto Bukti / Screenshot
+                        </label>
+                        <input type="file" name="bukti_bayar" accept=".jpg,.jpeg,.png,.pdf" required
+                            class="block w-full text-sm text-slate-300 file:mr-4 file:px-4 file:py-2 file:rounded-lg file:border-0
+                                file:bg-slate-700
+                                file:text-white
+                                file:font-semibold
+                                hover:file:bg-slate-600">
+
+                        <small class="text-slate-500">
+                            Format:
+                            JPG / PNG / PDF.
+                            Maksimal 2 MB.
+                        </small>
+                    </div>
                 </div>
 
-                <div>
-                    <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">Foto Bukti / Struk Screenshot</label>
-                    <input type="file" name="bukti" required accept="image/*"
-                           class="w-full text-xs text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-slate-950 file:text-slate-300 file:cursor-pointer hover:file:bg-slate-800 transition">
-                    <span class="text-[10px] text-slate-600 block mt-1">Format berkas: JPG, JPEG, PNG. Ukuran maksimal file 2MB.</span>
-                </div>
+                {{-- Footer --}}
+                <div class="border-t border-slate-700 px-6 py-4 flex justify-end gap-3">
 
-                <div class="flex items-center justify-end space-x-2 pt-3 border-t border-slate-800">
-                    <button type="button" @click="showUploadModal = false" class="px-4 py-2 text-xs font-semibold text-slate-400 hover:text-white transition">Batal</button>
-                    <button type="submit" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-full shadow-md shadow-blue-600/10 transition">Kirim Bukti 🚀</button>
+                    <button type="button" @click="showUploadModal=false" class="px-5 py-2 rounded-lg text-slate-400 hover:text-white">
+                        Batal
+                    </button>
+
+                    <button type="submit" class="px-6 py-2 bg-blue-600 hover:bg-blue-700 rounded-full font-bold text-white">
+                        Kirim Bukti
+                    </button>
                 </div>
             </form>
         </div>

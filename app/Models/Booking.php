@@ -14,16 +14,15 @@ class Booking extends Model
 
         'id_user',
         'id_kamar',
-        'nama_lengkap',
+        'tgl_booking',
+        'tgl_masuk',
+        'lama_sewa',
         'nik_ktp',
-        'no_hp',
-        'email',
-        'tgl_pengajuan',
-        'tgl_mulai_kos',
-        'status_booking',
+        'status',
         'catatan'
 
     ];
+
 
     public function user()
     {
@@ -33,6 +32,7 @@ class Booking extends Model
             'id'
         );
     }
+
 
     public function kamar()
     {

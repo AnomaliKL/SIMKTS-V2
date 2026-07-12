@@ -16,7 +16,7 @@
         <div class="flex h-full">
 
             <div class="hidden lg:block lg:w-7/12 relative bg-slate-900 overflow-hidden select-none">
-                <div class="absolute inset-0 bg-[url('/public/assets/img/BG-LOGIN.avif')] center center no-repeat bg-cover transform scale-105 hover:scale-100 transition duration-10000"></div>
+                <div style="background-image:url('{{ asset('assets/img/BG-LOGIN.avif') }}')" class="absolute inset-0 bg-cover bg-center"></div>
                 <div class="absolute inset-0 bg-gradient-to-r from-slate-950/40 to-slate-950/90"></div>
                 
                 <div class="absolute bottom-12 left-12 z-10 text-white space-y-2">
@@ -34,17 +34,17 @@
             <div class="w-full lg:w-5/12 bg-slate-950 flex items-center justify-center p-6 sm:p-12 shadow-2xl relative z-10">
                 <div class="w-full max-w-md space-y-6" x-data="{ showPassword: false }">
 
-                    {{-- <a href="/" class="text-slate-500 hover:text-blue-400 text-xs font-bold inline-flex items-center space-x-2 transition duration-150 group">
+                    <a href="{{ route('home') }}" class="text-slate-500 hover:text-blue-400 text-xs font-bold inline-flex items-center space-x-2 transition duration-150 group">
                         <img src="{{ asset('assets/icon/angle-circle-left.png') }}" class="w-3.5 h-3.5 object-contain opacity-60">
                         <span>Kembali ke Beranda</span>
-                    </a> --}}
+                    </a>
 
                     <div class="space-y-1 pt-2">
                         <div class="flex items-center space-x-2">
                             <span class="text-2xl">🏢</span>
                             <h3 class="text-xl font-black text-white tracking-tight">Selamat Datang</h3>
                         </div>
-                        <p class="text-slate-400 text-xs font-medium">Silakan login untuk mengakses manajemen kamar dan tagihan sewa.</p>
+                        <p class="text-slate-400 text-xs font-medium pb-10">Silakan login untuk melanjutkan proses booking atau mengakses akun Anda.</p>
                     </div>
 
                     @if ($errors->any())
@@ -54,7 +54,7 @@
                         </div>
                     @endif
 
-                    <form action="{{ route('login') }}" method="POST" class="space-y-4">
+                    <form action="{{ route('login.process') }}" method="POST" class="space-y-4">
                         @csrf
 
                         <div class="space-y-1.5">
@@ -63,7 +63,7 @@
                                 <span class="absolute inset-y-0 left-0 flex items-center pl-3">
                                     <img src="{{ asset('assets/icon/envelope.png') }}" alt="Email Icon" class="w-3.5 h-3.5 object-contain opacity-60">
                                 </span>
-                                <input type="email" name="email" value="{{ old('email') }}" required autofocus placeholder="admin@simkts.com"
+                                <input type="email" name="email" value="{{ old('email') }}" required autofocus placeholder="Masukkan Email"
                                        class="w-full text-xs bg-slate-900 border border-slate-800 rounded-xl pl-9 pr-4 py-3 text-slate-200 focus:outline-none focus:border-blue-500 transition">
                             </div>
                         </div>
@@ -74,7 +74,7 @@
                                 <span class="absolute inset-y-0 left-0 flex items-center pl-3">
                                     <img src="{{ asset('assets/icon/access-control.png') }}" alt="Email Icon" class="w-3.5 h-3.5 object-contain opacity-60">
                                 </span>
-                                <input :type="showPassword ? 'text' : 'password'" name="password" required placeholder="••••••"
+                                <input :type="showPassword ? 'text' : 'password'" name="password" required placeholder="Masukkan Password"
                                        class="w-full text-xs bg-slate-900 border border-slate-800 rounded-xl pl-9 pr-12 py-3 text-slate-200 focus:outline-none focus:border-blue-500 tracking-wide transition">
                                 <button type="button" @click="showPassword = !showPassword"
                                         class="absolute inset-y-0 right-0 flex items-center pr-3.5 text-slate-400 hover:text-white transition focus:outline-none text-xs">

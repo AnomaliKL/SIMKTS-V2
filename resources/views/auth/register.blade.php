@@ -33,11 +33,11 @@
 
             <div class="w-full lg:w-5/12 bg-slate-950 flex items-center justify-center p-6 sm:p-12 shadow-2xl relative z-10">
                 <div class="w-full max-w-md space-y-6" x-data="{ showPassword: false }">
-{{-- 
-                    <a href="/" class="text-slate-500 hover:text-blue-400 text-xs font-bold inline-flex items-center space-x-2 transition duration-150 group">
-                        <span class="transform group-hover:-translate-x-1 transition duration-150">⬅️</span>
+
+                    <a href="{{ route('home') }}" class=" text-slate-500 hover:text-blue-400 text-xs font-bold inline-flex items-center space-x-2 transition duration-150 group">
+                        <img src="{{ asset('assets/icon/angle-circle-left.png') }}" class="w-3.5 h-3.5 object-contain opacity-60">
                         <span>Kembali ke Beranda</span>
-                    </a> --}}
+                    </a>
 
                     <div class="space-y-1 pt-2">
                         <div class="flex items-center space-x-2">
@@ -46,13 +46,20 @@
                         <p class="text-slate-400 text-xs font-medium">Isi data diri Anda secara valid untuk mulai mengajukan sewa kamar.</p>
                     </div>
 
-                    @if (session('status'))
-                        <div class="bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs p-4 rounded-xl space-y-2" role="alert">
-                            <h6 class="font-black flex items-center space-x-1">
-                                <span>✅</span> <span>Pendaftaran Berhasil!</span>
-                            </h6>
-                            <p class="text-slate-400">Akun Anda telah terdaftar. Silakan <a href="{{ route('login') }}" class="font-bold text-emerald-400 underline hover:text-emerald-300">Login di sini</a>.</p>
+                    @if(session('success'))
+                    <div class="bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs p-4 rounded-xl">
+                        <div class="font-bold mb-2">
+                            ✅ {{ session('success') }}
                         </div>
+
+                        <p class="text-emerald-300">
+                            Silakan
+                            <a href="{{ route('login') }}" class="font-bold underline hover:text-white transition">
+                                Login di sini
+                            </a>
+                            untuk masuk.
+                        </p>
+                    </div>
                     @endif
 
                     @if ($errors->any())
@@ -70,7 +77,7 @@
                         </div>
                     @endif
 
-                    @if (!session('status'))
+                    @if(!session('success'))
                         <form action="{{ route('register.process') }}" method="POST" class="space-y-4">
                             @csrf
 
@@ -142,7 +149,7 @@
                                     <span>Daftar Akun</span>
                                 </button>
                                 
-                                <div class="text-center mt-4">
+                                <div class="text-center mt-4 mb-6">
                                     <span class="text-xs text-slate-500 font-medium">Sudah memiliki akun? </span>
                                     <a href="{{ route('login') }}" class="text-xs text-blue-500 hover:text-blue-400 font-bold transition duration-150 underline">
                                         Login di sini

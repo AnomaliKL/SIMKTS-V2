@@ -13,6 +13,7 @@ class UserSeeder extends Seeder
             'name' => 'Administrator',
             'email' => 'admin@simkts.com',
             'password' => '12345678',
+            'no_hp' => '08123456789',
             'role' => 'admin'
         ]);
     }

@@ -5,10 +5,10 @@
 @section('content')
 <div class="space-y-6" 
      x-data="{ 
-         bank: '{{ old('bank', $setting->nama_bank ?? '') }}', 
-         norek: '{{ old('norek', $setting->no_rekening ?? '') }}', 
-         an: '{{ old('an', $setting->atas_nama ?? '') }}' 
-     }">
+        bank: '{{ old('nama_bank', $bank->nama_bank ?? '') }}',
+        norek: '{{ old('no_rekening', $bank->no_rekening ?? '') }}',
+        an: '{{ old('atas_nama', $bank->atas_nama ?? '') }}'
+    }">
     
     <div>
         <h2 class="text-2xl font-black text-white tracking-tight">Pengaturan Sistem</h2>
@@ -39,25 +39,24 @@
             </div>
             
             <div class="p-6">
-                <form action="{{ route('admin.setting.update') }}" method="POST" class="space-y-4">
+                <form action="{{ route('admin.pengaturan.update') }}" method="POST" class="space-y-4">
                     @csrf
-                    @method('PUT')
 
                     <div>
                         <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">Nama Bank</label>
-                        <input type="text" name="bank" x-model="bank" required
+                        <input type="text" name="nama_bank" x-model="bank" required
                                class="w-full text-xs bg-slate-950 border border-slate-800 rounded-xl p-3 text-slate-200 focus:outline-none focus:border-blue-500 transition">
                     </div>
 
                     <div>
                         <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">No. Rekening</label>
-                        <input type="text" name="norek" x-model="norek" required
+                        <input type="text" name="no_rekening" x-model="norek" required
                                class="w-full text-xs bg-slate-950 border border-slate-800 rounded-xl p-3 text-slate-200 focus:outline-none focus:border-blue-500 transition">
                     </div>
 
                     <div>
                         <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">Atas Nama (A/N)</label>
-                        <input type="text" name="an" x-model="an" required
+                        <input type="text" name="atas_nama" x-model="an" required
                                class="w-full text-xs bg-slate-950 border border-slate-800 rounded-xl p-3 text-slate-200 focus:outline-none focus:border-blue-500 transition">
                     </div>
 

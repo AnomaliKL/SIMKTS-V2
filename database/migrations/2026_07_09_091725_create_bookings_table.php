@@ -12,43 +12,25 @@ return new class extends Migration
 
             $table->id('id_booking');
 
-            $table->unsignedBigInteger('id_user');
+            $table->foreignId('id_user')
+                  ->constrained('users')
+                  ->cascadeOnDelete();
 
-            $table->unsignedBigInteger('id_kamar');
+            $table->foreignId('id_kamar')
+                  ->constrained('kamars', 'id_kamar')
+                  ->cascadeOnDelete();
 
-            $table->string('nama_lengkap');
-
-            $table->string('nik_ktp',20);
-
-            $table->string('no_hp',20);
-
-            $table->string('email');
-
-            $table->dateTime('tgl_pengajuan');
-
-            $table->date('tgl_mulai_kos');
-
-            $table->enum('status_booking',[
-                'Pending',
-                'Diterima',
-                'Ditolak'
-            ])->default('Pending');
-
+            $table->date('tgl_booking');
+            $table->date('tgl_masuk');
+            $table->integer('lama_sewa');
+            $table->string('nik_ktp', 20);
+            $table->enum('status',[
+                'pending',
+                'diterima',
+                'ditolak'
+            ])->default('pending');
             $table->text('catatan')->nullable();
-
             $table->timestamps();
-
-            $table->foreign('id_user')
-                ->references('id')
-                ->on('users')
-                ->cascadeOnUpdate()
-                ->cascadeOnDelete();
-
-            $table->foreign('id_kamar')
-                ->references('id_kamar')
-                ->on('kamars')
-                ->cascadeOnUpdate()
-                ->restrictOnDelete();
 
         });
     }

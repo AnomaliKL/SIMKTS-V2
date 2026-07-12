@@ -82,7 +82,7 @@
         </div>
         
         @php
-            $jmlBooking = \App\Models\Booking::where('status_booking', 'pending')->count();
+            $jmlBooking = \App\Models\Booking::where('status', 'pending')->count();
         @endphp
         @if($jmlBooking > 0)
             <span class="px-2 py-0.5 text-[9px] font-black bg-rose-500 text-white rounded-md shadow-sm shrink-0" x-show="!isCollapsed" x-transition.opacity>
@@ -91,7 +91,7 @@
         @endif
     </a>
 
-    <a href="/admin/tagihan" 
+    <a href="{{ route('admin.tagihan.index') }}" 
        title="Data Tagihan"
        class="flex items-center rounded-xl text-xs font-semibold tracking-wide transition duration-150 group {{ Request::is('admin/tagihan*') ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20' : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-100' }}"
        :class="isCollapsed ? 'justify-center p-3' : 'space-x-3 px-4 py-3'">
@@ -101,7 +101,7 @@
 
     <div class="border-t border-slate-800/60 my-4"></div>
 
-    <a href="/admin/setting" 
+    <a href="{{ route('admin.pengaturan') }}" 
        title="Pengaturan"
        class="flex items-center rounded-xl text-xs font-semibold tracking-wide transition duration-150 group {{ Request::is('admin/setting*') ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20' : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-100' }}"
        :class="isCollapsed ? 'justify-center p-3' : 'space-x-3 px-4 py-3'">
@@ -109,7 +109,7 @@
         <span class="sidebar-text truncate" x-show="!isCollapsed" x-transition.opacity>Pengaturan</span>
     </a>
 
-    <a href="/admin/laporan" 
+    <a href="{{ route('admin.laporan') }}" 
        title="Laporan"
        class="flex items-center rounded-xl text-xs font-semibold tracking-wide transition duration-150 group {{ Request::is('admin/laporan*') ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20' : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-100' }}"
        :class="isCollapsed ? 'justify-center p-3' : 'space-x-3 px-4 py-3'">

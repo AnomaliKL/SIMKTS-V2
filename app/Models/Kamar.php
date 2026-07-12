@@ -28,4 +28,13 @@ class Kamar extends Model
             'id_kamar'
         );
     }
+
+    public function bookings()
+    {
+        return $this->hasMany(
+            Booking::class,
+            'id_kamar',
+            'id_kamar'
+        );
+    }
 }
