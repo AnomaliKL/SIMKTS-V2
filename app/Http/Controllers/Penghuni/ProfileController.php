@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 
 class ProfileController extends Controller
 {
@@ -14,7 +15,8 @@ class ProfileController extends Controller
         $request->validate([
             'name' => 'required|string|max:100',
             'no_hp' => 'required|string|max:20',
-            'foto' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'nik_ktp' => 'required|string|max:20', // 🛠️ Tambahkan validasi ini agar tidak lolos liar
+            'foto' => 'nullable|image|mimes:jpg,jpeg,png|max:10240', // Maksimal 10MB
             'password' => 'nullable|min:6',
         ]);
 
@@ -27,20 +29,28 @@ class ProfileController extends Controller
             $user->password = Hash::make($request->password);
         }
 
+        // Simpan perubahan NIK ke tabel penghuni jika berelasi
+        if ($user->penghuni) {
+            $user->penghuni->update([
+                'nik_ktp' => $request->nik_ktp
+            ]);
+        }
+
         if ($request->hasFile('foto')) {
+            $nik = $user->penghuni ? $user->penghuni->nik_ktp : 'user_' . $user->id;
+            $extension = $request->file('foto')->getClientOriginalExtension();
+            $fileName = $nik . '.' . $extension;
 
-            $path = $request
-                ->file('foto')
-                ->store('foto_user','public');
+            if ($user->foto && Storage::disk('public')->exists($user->foto)) {
+                Storage::disk('public')->delete($user->foto);
+            }
 
-            $user->foto_user = $path;
+            $path = $request->file('foto')->storeAs('foto_profile', $fileName, 'public');
+            $user->foto = $path; 
         }
 
         $user->save();
 
-        return back()->with(
-            'success',
-            'Profil berhasil diperbarui.'
-        );
+        return back()->with('success', 'Profil berhasil diperbarui.');
     }
 }

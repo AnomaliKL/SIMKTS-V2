@@ -71,16 +71,3 @@ Route::prefix('penghuni')->middleware(['auth', 'role:penghuni'])->name('penghuni
     Route::post('/tagihan/upload', [PenghuniTagihanController::class, 'upload'])->name('tagihan.upload');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
 });
-
-
-if (env('APP_ENV') === 'production') {
-    Route::get('/build/assets/{file}', function ($file) {
-        $path = public_path('build/assets/' . $file);
-        if (!file_exists($path)) {
-            abort(404);
-        }
-        
-        $type = str_ends_with($file, '.css') ? 'text/css' : 'application/javascript';
-        return response()->file($path, ['Content-Type' => $type]);
-    });
-}
