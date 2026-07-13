@@ -1,55 +1,39 @@
-# ==========================================
-# STAGE 1: Build Assets (Tailwind CSS & Alpine.js)
-# ==========================================
-FROM node:20-alpine AS asset-builder
-WORKDIR /app
-COPY package*.json vite.config.js tailwind.config.js ./
-COPY resources/ ./resources/
-RUN npm ci && npm run build
+FROM php:8.4-cli
 
-# ==========================================
-# STAGE 2: Application Runtime (PHP Bawaan Laravel)
-# ==========================================
-FROM php:8.4-cli-alpine
-
-# Install sistem dependencies untuk Laravel
-RUN apk add --no-cache \
-    curl \
+# 1. Instal dependensi sistem dan ekstensi PHP yang dibutuhkan Laravel
+RUN apt-get update && apt-get install -y \
     libpng-dev \
-    libjpeg-turbo-dev \
-    libwebp-dev \
-    freetype-dev \
-    libzip-dev \
+    libjpeg-dev \
+    libfreetype6-dev \
     zip \
     unzip \
     git \
-    oniguruma-dev \
-    libxml2-dev
+    curl \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install pdo_mysql gd
 
-# Install ekstensi PHP
-RUN docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp && \
-    docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd zip opcache
+# 2. Instal Node.js & NPM (Untuk Build Tailwind)
+RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
+    && apt-get install -y nodejs
 
-# Copy Composer
+# 3. Instal Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Set working directory
+# 4. Salin semua file proyek ke dalam container
 WORKDIR /var/www/html
-
-# Copy application source code
 COPY . .
 
-# Copy compiled assets dari Stage 1
-COPY --from=asset-builder /app/public/build ./public/build
+# 5. Jalankan composer install (Menggunakan PHP 8.4 bawaan container ini)
+RUN composer install --no-dev --optimize-autoloader --no-interaction
 
-# Install PHP dependencies menggunakan PHP 8.4 di container
-RUN composer install --no-dev --optimize-autoloader --no-scripts --no-interaction
+# 6. Jalankan NPM Install & NPM Build untuk compile Tailwind CSS & Alpine.js
+RUN npm install && npm run build
 
-# Set permission folder storage & cache
+# 7. Atur permissions folder storage dan cache
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 
-# Port default untuk Railway
+# Sesuaikan port ke 8080 untuk Railway
 EXPOSE 8080
 
-# Jalankan server bawaan Laravel secara langsung tanpa Nginx & Supervisor
-CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8080"]
+# Jalankan optimasi dan server dengan format shell form agar multi-command berjalan lancar
+CMD php artisan optimize && php artisan storage:link && php artisan serve --host=0.0.0.0 --port=8080
