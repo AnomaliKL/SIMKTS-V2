@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controller\Penghuni\ProfileController;
 use App\Http\Controllers\Admin\BookingController as AdminBookingController;
 use App\Http\Controllers\Admin\KamarController;
 use App\Http\Controllers\Admin\LaporanController;
@@ -11,9 +12,8 @@ use App\Http\Controllers\BookingController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Penghuni\DashboardController as PenghuniDashboardController;
-use App\Http\Controllers\Penghuni\ProfileController;
 use App\Http\Controllers\Penghuni\TagihanController as PenghuniTagihanController;
-use Illuminate\Support\Facades\Route; // <-- SUDAH DIPERBAIKI (Ditambah 's' pada Controllers)
+use Illuminate\Support\Facades\Route;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/kamar/{id}', [HomeController::class, 'detail'])->name('kamar.detail');
@@ -32,22 +32,11 @@ Route::middleware('guest')->group(function () {
 
 Route::middleware('auth')->group(function () {
 
-    // Logout
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 });
 
 Route::prefix('admin')->middleware(['auth', 'role:admin'])->name('admin.')->group(function () {
-
-Route::get('/dashboard', [DashboardController::class, 'admin'])->name('dashboard');
-    
-    // 🛠️ TAMBAHKAN BARIS INI (Rute manual untuk Delete Kamar berdasarkan ID kustom)
-    Route::delete('kamar/{id}', [KamarController::class, 'destroy'])->name('kamar.destroy');
-    
-    Route::resource('kamar', KamarController::class)->except(['create', 'edit', 'show']);
-
-    Route::resource('penghuni', PenghuniController::class)->except(['create', 'edit', 'show']);
-    Route::post('penghuni/{id}/checkout', [PenghuniController::class, 'checkout'])->name('penghuni.checkout');
 
     Route::get('/dashboard', [DashboardController::class, 'admin'])->name('dashboard');
     Route::resource('kamar', KamarController::class)->except(['create', 'edit', 'show']);
