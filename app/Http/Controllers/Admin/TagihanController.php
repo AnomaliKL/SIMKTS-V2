@@ -124,7 +124,7 @@ class TagihanController extends Controller
         $tagihan = Tagihan::findOrFail($id);
 
         $tagihan->update([
-            'status' => 'belum_bayar',
+            'status' => 'ditolak',
             'bukti_bayar' => null,
             'tgl_bayar' => null,
         ]);
