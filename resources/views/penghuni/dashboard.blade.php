@@ -79,7 +79,7 @@
 
     <main class="flex-1 max-w-7xl mx-auto w-full p-4 sm:p-6 lg:p-8 space-y-6 overflow-y-auto">
 
-        @if ($current_tagihan && strtolower($current_tagihan->status) === 'belum_bayar')
+        {{-- @if ($current_tagihan && strtolower($current_tagihan->status) === 'belum_bayar')
             <div
                 class="bg-rose-500/10 border border-rose-500/20 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-sm">
                 <div class="flex items-start space-x-3">
@@ -101,6 +101,44 @@
                         "
                     class="px-4 py-2.5 bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold rounded-xl shadow-md shadow-rose-600/10 cursor-pointer transition shrink-0">
                     Bayar Sekarang
+                </button>
+            </div>
+        @endif --}}
+
+        @if (
+            $current_tagihan &&
+                (strtolower($current_tagihan->status) === 'belum_bayar' || strtolower($current_tagihan->status) === 'ditolak'))
+            <div
+                class="bg-rose-500/10 border border-rose-500/20 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-sm">
+                <div class="flex items-start space-x-3">
+                    <span class="text-xl text-rose-400 mt-0.5">⚠️</span>
+                    <div>
+                        @if (strtolower($current_tagihan->status) === 'ditolak')
+                            <h5 class="text-xs font-black text-rose-500 uppercase tracking-wider">Pembayaran Ditolak
+                                Admin</h5>
+                            <p class="text-slate-400 text-xs font-medium mt-1">Bukti transfer sebelumnya dinyatakan
+                                <strong class="text-rose-400">Tidak Valid</strong>. Silakan upload ulang bukti transfer
+                                yang benar sebesar <strong class="text-slate-200 font-extrabold font-mono">Rp
+                                    {{ number_format($current_tagihan->jumlah_tagihan, 0, ',', '.') }}</strong>.
+                            </p>
+                        @else
+                            <h5 class="text-xs font-black text-rose-400 uppercase tracking-wider">Tagihan Bulan Ini
+                                Belum Dibayar</h5>
+                            <p class="text-slate-400 text-xs font-medium mt-1">Segera lakukan transfer sebesar <strong
+                                    class="text-slate-200 font-extrabold font-mono">Rp
+                                    {{ number_format($current_tagihan->jumlah_tagihan, 0, ',', '.') }}</strong> sebelum
+                                masa tenggat jatuh tempo habis.</p>
+                        @endif
+                    </div>
+                </div>
+                <button
+                    @click="
+                            uploadData.id = '{{ $current_tagihan->id_tagihan }}';
+                            uploadData.bulan = '{{ \Carbon\Carbon::parse($current_tagihan->bulan_tagihan)->isoFormat('MMMM YYYY') }}';
+                            showUploadModal = true;
+                        "
+                    class="px-4 py-2.5 bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold rounded-xl shadow-md shadow-rose-600/10 cursor-pointer transition shrink-0">
+                    {{ strtolower($current_tagihan->status) === 'ditolak' ? 'Upload Ulang Bukti' : 'Bayar Sekarang' }}
                 </button>
             </div>
         @endif
@@ -186,7 +224,7 @@
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-800/40 text-xs font-medium">
-                        @forelse($riwayats as $row)
+                        {{-- @forelse($riwayats as $row)
                             @php $status = strtolower($row->status); @endphp
                             <tr class="hover:bg-slate-800/20 text-slate-200 transition">
                                 <td class="px-5 py-3.5 font-bold text-slate-200">
@@ -222,6 +260,57 @@
                                                 "
                                             class="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-[10px] font-bold rounded-lg transition cursor-pointer">
                                             📤 Bayar
+                                        </button>
+                                    @elseif($status === 'menunggu_validasi')
+                                        <span
+                                            class="text-amber-500/80 text-[11px] font-medium italic inline-flex items-center space-x-1">
+                                            <span>⏳</span> <span>Audit Admin</span>
+                                        </span>
+                                    @else
+                                        <span class="text-emerald-400 text-base">🏆</span>
+                                    @endif
+                                </td>
+                            </tr> --}}
+                        @forelse($riwayats as $row)
+                            @php $status = strtolower($row->status); @endphp
+                            <tr class="hover:bg-slate-800/20 text-slate-200 transition">
+                                <td class="px-5 py-3.5 font-bold text-slate-200">
+                                    {{ \Carbon\Carbon::parse($row->bulan_tagihan)->isoFormat('MMMM YYYY') }}
+                                </td>
+                                <td class="px-5 py-3.5 text-slate-500 text-[11px]">
+                                    {{ \Carbon\Carbon::parse($row->tgl_jatuh_tempo)->format('d/m/Y') }}
+                                </td>
+                                <td class="px-5 py-3.5 font-mono text-slate-200 font-extrabold">
+                                    Rp {{ number_format($row->jumlah_tagihan, 0, ',', '.') }}
+                                </td>
+                                <td class="px-5 py-3.5">
+                                    @if ($status === 'lunas')
+                                        <span
+                                            class="px-2.5 py-0.5 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[10px] font-bold rounded-full uppercase tracking-wide">Lunas</span>
+                                    @elseif($status === 'menunggu_validasi')
+                                        <span
+                                            class="px-2.5 py-0.5 bg-amber-500/10 text-amber-400 border border-amber-500/20 text-[10px] font-bold rounded-full uppercase tracking-wide">Diproses</span>
+                                    @elseif($status === 'ditolak')
+                                        <!-- 🛠️ Tambahan badge jika ditolak admin -->
+                                        <span
+                                            class="px-2.5 py-0.5 bg-rose-500/10 text-rose-500 border border-rose-500/20 text-[10px] font-bold rounded-full uppercase tracking-wide">Ditolak</span>
+                                    @else
+                                        <span
+                                            class="px-2.5 py-0.5 bg-rose-500/10 text-rose-400 border border-rose-500/20 text-[10px] font-bold rounded-full uppercase tracking-wide">Belum
+                                            Bayar</span>
+                                    @endif
+                                </td>
+                                <td class="px-5 py-3.5 text-center flex justify-center items-center">
+                                    @if ($status === 'belum_bayar' || $status === 'ditolak')
+                                        <!-- 🛠️ Jika belum bayar ATAU ditolak, tampilkan tombol upload bukti -->
+                                        <button
+                                            @click="
+                                                    uploadData.id = '{{ $row->id_tagihan }}';
+                                                    uploadData.bulan = '{{ \Carbon\Carbon::parse($row->bulan_tagihan)->isoFormat('MMMM YYYY') }}';
+                                                    showUploadModal = true;
+                                                "
+                                            class="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-[10px] font-bold rounded-lg transition cursor-pointer">
+                                            📤 {{ $status === 'ditolak' ? 'Ulangi' : 'Bayar' }}
                                         </button>
                                     @elseif($status === 'menunggu_validasi')
                                         <span
