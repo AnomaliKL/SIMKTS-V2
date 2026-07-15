@@ -125,8 +125,8 @@ class TagihanController extends Controller
 
         $tagihan->update([
             'status' => 'ditolak',
-            'bukti_bayar' => null,
-            'tgl_bayar' => null,
+            // 'bukti_bayar' => null,
+            // 'tgl_bayar' => null,
         ]);
 
         return back()->with(
