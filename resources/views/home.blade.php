@@ -308,7 +308,6 @@
                     color: '#fff',
                     willClose: () => {
                         // Opsional: Langsung redirect pengunjung ke dashboard setelah klik OK
-                        window.location.href = "/dashboard";
                     }
                 });
             });

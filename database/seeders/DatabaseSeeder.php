@@ -52,13 +52,23 @@ class DatabaseSeeder extends Seeder
             'Kamar Premium Balkon Luar, AC, TV, Kamar Mandi Dalam',
         ];
 
+        // Pilihan URL gambar dari Unsplash untuk demo
+        $fotoKamarPilihan = [
+            'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=600',
+            'https://images.unsplash.com/photo-1598928506311-c55ded91a20c?w=600',
+            'https://images.unsplash.com/photo-1505691938895-1758d7feb511?w=600',
+            'https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?w=600'
+        ];
+
         for ($i = 1; $i <= 55; $i++) {
             $kamarIds[] = DB::table('kamars')->insertGetId([
-                'no_kamar' => 'K-'.str_pad($i, 3, '0', STR_PAD_LEFT),
+                // Mengubah format penomoran menjadi KM-001 s.d. KM-055
+                'no_kamar' => 'KM-'.str_pad($i, 3, '0', STR_PAD_LEFT),
                 'deskripsi' => fake()->randomElement($deskripsiPilihan),
                 'harga_sewa' => fake()->randomElement($hargaPilihan),
                 'status_kamar' => fake()->randomElement(['Kosong', 'Terisi']),
-                'foto_kamar' => null,
+                // Mengisi foto menggunakan URL internet secara acak
+                'foto_kamar' => fake()->randomElement($fotoKamarPilihan),
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
@@ -70,7 +80,7 @@ class DatabaseSeeder extends Seeder
         $penghuniIds = [];
         for ($i = 0; $i < 50; $i++) {
             $penghuniIds[] = DB::table('penghunis')->insertGetId([
-                'id_user' => $userIdsPenghuni[$i], // Hubungkan ke user role penghuni
+                'id_user' => $userIdsPenghuni[$i],
                 'id_kamar' => fake()->randomElement($kamarIds),
                 'nama_lengkap' => fake()->name(),
                 'nik_ktp' => fake()->unique()->numerify('################'),
