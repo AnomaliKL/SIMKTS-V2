@@ -175,7 +175,7 @@ class TagihanController extends Controller
                     ]
                 ],
                 'subject' => "Notifikasi Pembayaran Tagihan: DITOLAK",
-                'html'    => view('emails.notifikasi-pembayaran', compact('tagihan', 'status', 'alasan_ditolak'))->render(),
+                'html'    => view('emails.notifikasi_pembayaran', compact('tagihan', 'status', 'alasan_ditolak'))->render(),
             ]);
 
         if ($response->failed()) {
