@@ -12,23 +12,23 @@ class KamarController extends Controller
 {
     public function index()
     {
-        $kamars = Kamar::orderBy('no_kamar')->get();
+        $kamars = Kamar::orderBy('no_kamar', 'asc')->get();
 
-        // LOGIKA AUTO-NUMBER: Ambil kamar terakhir, ekstrak angkanya, naikkan +1
-        $lastKamar = Kamar::orderBy('id_kamar', 'desc')->first();
-        $next_no_kamar = 'KMR-01';
-        if ($lastKamar) {
-            // Mengambil digit angka dari string nomor kamar terakhir
-            preg_match('/\d+/', $lastKamar->no_kamar, $matches);
-            if (!empty($matches)) {
-                $number = (int)$matches[0] + 1;
-                // Prefiks menyesuaikan atau default menggunakan KMR-
-                $prefix = str_replace($matches[0], '', $lastKamar->no_kamar);
-                $next_no_kamar = ($prefix ?: 'KMR-') . str_pad($number, 2, '0', STR_PAD_LEFT);
-            }
-        }
+    // Mengambil nomor kamar paling terakhir di database
+    $kamarTerakhir = Kamar::orderBy('id_kamar', 'desc')->first();
 
-        return view('admin.data_kamar', compact('kamars', 'next_no_kamar'));
+    if ($kamarTerakhir) {
+        // Mengambil angka saja dari format "KM-052" -> 52
+        $angkaTerakhir = (int) filter_var($kamarTerakhir->no_kamar, FILTER_SANITIZE_NUMBER_INT);
+        $nomorBerikutnya = $angkaTerakhir + 1;
+    } else {
+        $nomorBerikutnya = 1;
+    }
+
+    // Mengubah angka 1 menjadi "KM-001", angka 52 menjadi "KM-052"
+    $next_no_kamar = 'KM-' . str_pad($nomorBerikutnya, 3, '0', STR_PAD_LEFT);
+
+    return view('admin.data_kamar', compact('kamars', 'next_no_kamar'));
     }
 
     public function store(Request $request)

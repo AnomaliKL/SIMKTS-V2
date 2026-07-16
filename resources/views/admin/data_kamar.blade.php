@@ -87,17 +87,24 @@
 
                                 <td class="px-5 py-3.5">
                                     <div class="flex items-center space-x-3">
+                                        <!-- Menampilkan preview foto kamar secara langsung di baris tabel -->
                                         <div
-                                            class="w-8 h-8 rounded-lg bg-blue-500/10 text-blue-400 flex items-center justify-center text-xs shadow-inner">
-                                            🚪
-                                        </div>
-                                        <div class="flex items-center space-x-1.5">
-                                            <span class="font-extrabold text-sm tracking-tight text-slate-100">Kamar
-                                                {{ $row->no_kamar }}</span>
+                                            class="w-10 h-10 rounded-lg bg-slate-950 border border-slate-800 overflow-hidden flex items-center justify-center text-xs shadow-inner shrink-0">
                                             @if ($row->foto_kamar)
-                                                <span class="text-xs opacity-60 cursor-help"
-                                                    title="Memiliki berkas foto">🖼️</span>
+                                                <img src="{{ asset('storage/' . $row->foto_kamar) }}" alt="Foto"
+                                                    class="w-full h-full object-cover">
+                                            @else
+                                                <span class="opacity-40">🖼️</span>
                                             @endif
+                                        </div>
+
+                                        <div>
+                                            <span class="font-extrabold text-sm tracking-tight text-slate-100 block">
+                                                {{ $row->no_kamar }}
+                                            </span>
+                                            <span class="text-[10px] text-slate-500 font-medium">
+                                                {{ $row->foto_kamar ? 'Ada Foto' : 'Tanpa Foto' }}
+                                            </span>
                                         </div>
                                     </div>
                                 </td>
@@ -162,6 +169,7 @@
             </div>
         </div>
 
+        <!-- MODAL ADD (TAMBAH DATA) -->
         <div x-show="showAddModal"
             class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm" x-cloak
             x-transition>
@@ -182,9 +190,9 @@
                         <div>
                             <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">Nomor
                                 Kamar</label>
-                            <input type="text" name="no_kamar" required value="{{ $next_no_kamar }}"
-                                placeholder="Cth: A-01"
-                                class="w-full text-xs bg-slate-950 border border-slate-800 rounded-xl p-3 text-slate-200 focus:outline-none focus:border-blue-500 transition">
+                            <!-- Ditambahkan readonly & cursor-not-allowed agar admin tidak bisa edit format otomatis KM-XXX -->
+                            <input type="text" name="no_kamar" required value="{{ $next_no_kamar }}" readonly
+                                class="w-full text-xs bg-slate-950/50 border border-slate-800 rounded-xl p-3 text-slate-400 cursor-not-allowed focus:outline-none">
                         </div>
                         <div>
                             <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">Harga
@@ -216,6 +224,7 @@
             </div>
         </div>
 
+        <!-- MODAL EDIT -->
         <div x-show="showEditModal"
             class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm" x-cloak
             x-transition>
@@ -239,8 +248,9 @@
                         <div>
                             <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">Nomor
                                 Kamar</label>
-                            <input type="text" name="no_kamar" x-model="editData.nomor" required
-                                class="w-full text-xs bg-slate-950 border border-slate-800 rounded-xl p-3 text-slate-200 focus:outline-none focus:border-blue-500 transition">
+                            <!-- Ditambahkan readonly & cursor-not-allowed agar nomor tetap terkunci saat update data -->
+                            <input type="text" name="no_kamar" x-model="editData.nomor" required readonly
+                                class="w-full text-xs bg-slate-950/50 border border-slate-800 rounded-xl p-3 text-slate-400 cursor-not-allowed focus:outline-none">
                         </div>
                         <div>
                             <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">Harga
@@ -277,34 +287,6 @@
     </div>
 
     <script>
-        document.addEventListener('click', function(e) {
-            const btnHapus = e.target.closest('.btn-hapus');
-            if (btnHapus) {
-                e.preventDefault();
-                Swal.fire({
-                    title: 'Hapus Kamar?',
-                    text: "Data kamar akan dihapus permanen dari inventaris sistem jika tidak sedang terisi.",
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#ef4444',
-                    cancelButtonColor: '#64748b',
-                    confirmButtonText: 'Ya, Hapus!',
-                    cancelButtonText: 'Batal',
-                    background: '#0f172a',
-                    color: '#fff',
-                    customClass: {
-                        popup: 'border border-slate-800 rounded-2xl shadow-2xl'
-                    }
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        btnHapus.closest('form').submit();
-                    }
-                });
-            }
-        });
-    </script>
-
-    <script>
         function konfirmasiHapus(idKamar) {
             Swal.fire({
                 title: 'Hapus Kamar?',
@@ -322,7 +304,6 @@
                 }
             }).then((result) => {
                 if (result.isConfirmed) {
-                    // Mengincar form secara spesifik berdasarkan ID Kamar, dijamin tidak akan 'undefined'
                     document.getElementById('delete-form-' + idKamar).submit();
                 }
             });
