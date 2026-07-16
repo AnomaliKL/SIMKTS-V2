@@ -37,7 +37,7 @@ class KamarController extends Controller
             'no_kamar'   => 'required|unique:kamars,no_kamar',
             'deskripsi'  => 'nullable',
             'harga_sewa' => 'required|numeric|min:0', // <-- Min 0 agar tidak minus
-            'foto'       => 'nullable|image|mimes:jpg,jpeg,png|max:2048'
+            'foto'       => 'nullable|image|mimes:jpg,jpeg,png'
         ];
 
         $messages = [
