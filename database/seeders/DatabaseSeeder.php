@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 
 class DatabaseSeeder extends Seeder
 {
@@ -42,7 +43,7 @@ class DatabaseSeeder extends Seeder
         }
 
         // -------------------------------------------------------------
-        // 2. SEEDER TABEL KAMARS (55 Kamar)
+        // 2. SEEDER TABEL KAMARS (55 Kamar + DOWNLOAD GAMBAR OTOMATIS)
         // -------------------------------------------------------------
         $kamarIds = [];
         $hargaPilihan = [500000, 750000, 1000000, 1200000];
@@ -52,7 +53,7 @@ class DatabaseSeeder extends Seeder
             'Kamar Premium Balkon Luar, AC, TV, Kamar Mandi Dalam',
         ];
 
-        // Pilihan URL gambar dari Unsplash untuk demo
+        // Pilihan URL gambar dari Unsplash untuk diunduh
         $fotoKamarPilihan = [
             'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=600',
             'https://images.unsplash.com/photo-1598928506311-c55ded91a20c?w=600',
@@ -60,15 +61,35 @@ class DatabaseSeeder extends Seeder
             'https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?w=600'
         ];
 
+        // Buat folder 'kamar' di storage jika belum ada
+        if (!Storage::disk('public')->exists('kamar')) {
+            Storage::disk('public')->makeDirectory('kamar');
+        }
+
         for ($i = 1; $i <= 55; $i++) {
+            $urlGambar = fake()->randomElement($fotoKamarPilihan);
+            $namaFile = 'kamar_seeder_' . $i . '.jpg';
+            $pathSimpan = 'kamar/' . $namaFile;
+
+            // Unduh gambar secara otomatis
+            try {
+                $kontenGambar = file_get_contents($urlGambar);
+                if ($kontenGambar !== false) {
+                    Storage::disk('public')->put($pathSimpan, $kontenGambar);
+                    $fotoKamarValue = $pathSimpan; // DB akan menyimpan: 'kamar/kamar_seeder_x.jpg'
+                } else {
+                    $fotoKamarValue = null;
+                }
+            } catch (\Exception $e) {
+                $fotoKamarValue = null; // Jika server offline/gagal download, set null agar seeder tidak crash
+            }
+
             $kamarIds[] = DB::table('kamars')->insertGetId([
-                // Mengubah format penomoran menjadi KM-001 s.d. KM-055
                 'no_kamar' => 'KM-'.str_pad($i, 3, '0', STR_PAD_LEFT),
                 'deskripsi' => fake()->randomElement($deskripsiPilihan),
                 'harga_sewa' => fake()->randomElement($hargaPilihan),
                 'status_kamar' => fake()->randomElement(['Kosong', 'Terisi']),
-                // Mengisi foto menggunakan URL internet secara acak
-                'foto_kamar' => fake()->randomElement($fotoKamarPilihan),
+                'foto_kamar' => $fotoKamarValue,
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
