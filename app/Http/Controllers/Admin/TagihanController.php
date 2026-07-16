@@ -143,45 +143,47 @@ class TagihanController extends Controller
 
     public function rejectPayment(Request $request, $id)
     {
-       // Validasi agar admin wajib mengisi teks alasannya
-        $request->validate([
-            'alasan_ditolak' => 'required|string|max:255'
+   // Validasi agar admin wajib mengisi teks alasannya
+    $request->validate([
+        'alasan_ditolak' => 'required|string|max:255'
+    ]);
+
+    $tagihan = Tagihan::findOrFail($id);
+    
+    $tagihan->update([
+        'status' => 'ditolak',
+        'alasan_ditolak' => $request->alasan_ditolak
+    ]);
+
+    // 🔴 REFRESH DATA OBJECT (Agar data alasan terbaru dari database masuk ke memori view)
+    $tagihan->refresh();
+
+    // Ambil Data Penerima
+    $emailUser = $tagihan->penghuni->user->email;
+    $namaUser = $tagihan->penghuni->nama_lengkap;
+    $status = 'tolak';
+
+    // Kirim Email Penolakan via HTTP API Mailersend
+    $response = Http::withToken(env('MAILERSEND_API_KEY'))
+        ->post('https://api.mailersend.com/v1/email', [
+            'from' => [
+                'email' => env('MAIL_FROM_ADDRESS'),
+                'name'  => env('MAIL_FROM_NAME'),
+            ],
+            'to' => [
+                [
+                    'email' => $emailUser,
+                    'name'  => $namaUser,
+                ]
+            ],
+            'subject' => "Notifikasi Pembayaran Tagihan: DITOLAK",
+            'html'    => view('emails.notifikasi_pembayaran', compact('tagihan', 'status'))->render(),
         ]);
 
-        $tagihan = Tagihan::findOrFail($id);
-        
-        $tagihan->update([
-            'status' => 'ditolak',
-            'alasan_ditolak' => $request->alasan_ditolak
-        ]);
-
-        // Ambil Data Penerima
-        $emailUser = $tagihan->penghuni->user->email;
-        $namaUser = $tagihan->penghuni->nama_lengkap;
-        $status = 'tolak';
-        $alasan_ditolak = $request->alasan_ditolak;
-
-        // Kirim Email Penolakan via HTTP API Mailersend
-        $response = Http::withToken(env('MAILERSEND_API_KEY'))
-            ->post('https://api.mailersend.com/v1/email', [
-                'from' => [
-                    'email' => env('MAIL_FROM_ADDRESS'),
-                    'name'  => env('MAIL_FROM_NAME'),
-                ],
-                'to' => [
-                    [
-                        'email' => $emailUser,
-                        'name'  => $namaUser,
-                    ]
-                ],
-                'subject' => "Notifikasi Pembayaran Tagihan: DITOLAK",
-                'html'    => view('emails.notifikasi_pembayaran', compact('tagihan', 'status', 'alasan_ditolak'))->render(),
-            ]);
-
-        if ($response->failed()) {
-            Log::error('Gagal mengirim email penolakan lewat HTTP API Mailersend: ' . $response->body());
-        }
-
-        return back()->with('success', 'Bukti pembayaran ditolak & email alasan berhasil terkirim.');
+    if ($response->failed()) {
+        Log::error('Gagal mengirim email penolakan lewat HTTP API Mailersend: ' . $response->body());
     }
+
+    return back()->with('success', 'Bukti pembayaran ditolak & email alasan berhasil terkirim.');
+}
 }
