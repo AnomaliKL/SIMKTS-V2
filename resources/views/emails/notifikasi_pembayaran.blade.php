@@ -26,7 +26,7 @@
             <div
                 style="background-color: #fef2f2; border-left: 4px solid #ef4444; padding: 15px; margin: 15px 0; border-radius: 4px;">
                 <strong style="color: #991b1b;">Alasan Penolakan:</strong>
-                <p style="margin: 5px 0 0 0; color: #7f1d1d;">"{{ $alasan }}"</p>
+                <p style="margin: 5px 0 0 0; color: #7f1d1d;">"{{ $alasan ?? '' }}"</p>
             </div>
 
             <p>Silakan login kembali ke dashboard SIMKTS Anda untuk melakukan upload ulang bukti transfer yang benar.
