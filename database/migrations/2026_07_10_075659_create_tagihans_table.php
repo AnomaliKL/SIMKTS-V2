@@ -28,6 +28,7 @@ return new class extends Migration
                 'ditolak'
             ])->default('belum_bayar');
 
+            $table->text('alasan_ditolak')->nullable();
             $table->string('bukti_bayar')->nullable();
             $table->timestamp('tgl_bayar')->nullable();
             $table->timestamps();

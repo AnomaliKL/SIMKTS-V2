@@ -14,6 +14,8 @@ return new class extends Migration
             $table->string('nama_bank');
             $table->string('no_rekening');
             $table->string('atas_nama');
+            $table->string('smtp_email')->nullable();
+            $table->string('smtp_app_password')->nullable();
             $table->timestamps();
 
         });

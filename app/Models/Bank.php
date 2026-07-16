@@ -14,7 +14,9 @@ class Bank extends Model
 
         'nama_bank',
         'no_rekening',
-        'atas_nama'
+        'atas_nama',
+        'smtp_email', 
+        'smtp_app_password'
 
     ];
 }

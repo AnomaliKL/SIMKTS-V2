@@ -150,8 +150,11 @@
                                             </button>
                                         </form>
                                         <form action="{{ route('admin.tagihan.reject', $row->id_tagihan) }}" method="POST"
-                                            class="inline">
+                                            class="inline form-tolak-massal">
                                             @csrf @method('PATCH')
+                                            <!-- Input hidden untuk menampung teks dari SweetAlert -->
+                                            <input type="hidden" name="alasan_ditolak" class="input-alasan-hidden">
+
                                             <button type="button"
                                                 class="btn-tolak p-1.5 text-rose-400 hover:text-white bg-rose-500/10 hover:bg-rose-500 border border-rose-500/20 rounded-xl cursor-pointer transition">
                                                 ✕
@@ -257,25 +260,60 @@
                     });
                 }
 
+                // const actReject = e.target.closest('.btn-tolak');
+                // if (actReject) {
+                //     e.preventDefault();
+                //     Swal.fire({
+                //         title: 'Tolak Berkas Bukti?',
+                //         text: "Bukti transfer tidak valid",
+                //         icon: 'error',
+                //         showCancelButton: true,
+                //         confirmButtonColor: '#ef4444',
+                //         cancelButtonColor: '#64748b',
+                //         confirmButtonText: 'Ya, Tolak!',
+                //         cancelButtonText: 'Batal',
+                //         background: '#0f172a',
+                //         color: '#fff',
+                //         customClass: {
+                //             popup: 'border border-slate-800 rounded-2xl'
+                //         }
+                //     }).then((res) => {
+                //         if (res.isConfirmed) actReject.closest('form').submit();
+                //     });
+                // }
                 const actReject = e.target.closest('.btn-tolak');
                 if (actReject) {
                     e.preventDefault();
+
                     Swal.fire({
                         title: 'Tolak Berkas Bukti?',
-                        text: "Bukti transfer tidak valid",
-                        icon: 'error',
+                        text: "Masukkan alasan penolakan bukti transfer ini:",
+                        input: 'textarea', // 🛠️ Menampilkan kolom text area input di dalam SweetAlert
+                        inputPlaceholder: 'Contoh: Nominal transfer kurang / Gambar struk blur...',
+                        icon: 'warning',
                         showCancelButton: true,
                         confirmButtonColor: '#ef4444',
                         cancelButtonColor: '#64748b',
-                        confirmButtonText: 'Ya, Tolak!',
+                        confirmButtonText: 'Ya, Tolak & Kirim Email!',
                         cancelButtonText: 'Batal',
                         background: '#0f172a',
                         color: '#fff',
+                        inputValidator: (value) => {
+                            if (!value) {
+                                return 'Anda wajib mengisi alasan penolakan!' // Mencegah form dikirim kosong
+                            }
+                        },
                         customClass: {
-                            popup: 'border border-slate-800 rounded-2xl'
+                            popup: 'border border-slate-800 rounded-2xl',
+                            input: 'bg-slate-950 border border-slate-800 text-white text-xs rounded-xl focus:outline-none focus:border-blue-500'
                         }
                     }).then((res) => {
-                        if (res.isConfirmed) actReject.closest('form').submit();
+                        if (res.isConfirmed) {
+                            const formParent = actReject.closest('form');
+                            // Isi nilai input hidden dengan teks yang diketik admin di SweetAlert
+                            formParent.querySelector('.input-alasan-hidden').value = res.value;
+                            formParent.submit();
+                        }
                     });
                 }
             });

@@ -106,32 +106,34 @@ class TagihanController extends Controller
     }
 
     public function validatePayment($id)
-    {
-        $tagihan = Tagihan::findOrFail($id);
+    {$tagihan = Tagihan::findOrFail($id);
+        $tagihan->update(['status' => 'lunas']);
 
-        $tagihan->update([
-            'status' => 'lunas'
-        ]);
+        // Kirim Email Sukses
+        $emailUser = $tagihan->penghuni->user->email;
+        Mail::to($emailUser)->send(new NotifikasiPembayaranMail($tagihan, 'terima'));
 
-        return back()->with(
-            'success',
-            'Pembayaran berhasil divalidasi.'
-        );
+        return back()->with('success', 'Pembayaran berhasil divalidasi & email terkirim.');
     }
 
     public function rejectPayment($id)
     {
-        $tagihan = Tagihan::findOrFail($id);
-
-        $tagihan->update([
-            'status' => 'ditolak',
-            // 'bukti_bayar' => null,
-            // 'tgl_bayar' => null,
+       // Validasi agar admin wajib mengisi teks alasannya
+        $request->validate([
+            'alasan_ditolak' => 'required|string|max:255'
         ]);
 
-        return back()->with(
-            'success',
-            'Bukti pembayaran ditolak.'
-        );
+        $tagihan = Tagihan::findOrFail($id);
+        
+        $tagihan->update([
+            'status' => 'ditolak',
+            'alasan_ditolak' => $request->alasan_ditolak
+        ]);
+
+        // Kirim Email Penolakan dengan Alasan
+        $emailUser = $tagihan->penghuni->user->email;
+        Mail::to($emailUser)->send(new NotifikasiPembayaranMail($tagihan, 'tolak', $request->alasan_ditolak));
+
+        return back()->with('success', 'Bukti pembayaran ditolak & email alasan berhasil terkirim.');
     }
 }
