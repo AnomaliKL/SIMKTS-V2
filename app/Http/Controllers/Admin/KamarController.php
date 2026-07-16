@@ -81,7 +81,7 @@ class KamarController extends Controller
                 'no_kamar'   => 'required|unique:kamars,no_kamar,'.$kamar->id_kamar.',id_kamar',
                 'deskripsi'  => 'nullable',
                 'harga_sewa' => 'required|numeric|min:0', // <-- Min 0 agar tidak minus
-                'foto'       => 'nullable|image|max:2048'
+                'foto'       => 'nullable|image'
             ];
 
             $messages = [
