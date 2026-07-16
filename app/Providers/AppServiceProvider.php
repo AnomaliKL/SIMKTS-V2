@@ -24,10 +24,14 @@ class AppServiceProvider extends ServiceProvider
     {
         URL::forceScheme('https');
 
-        if (Schema::hasTable('pengaturans')) {
-            $setup = Pengaturan::first();
+        if (app()->runningInConsole()) {
+            return;
+        }
 
-            // Jika admin sudah mengisi data Gmail di pengaturan, timpa setelan .env
+        // Kode di bawah ini hanya berjalan jika diakses via web browser normal
+        if (Schema::hasTable('banks')) {
+            $setup = Bank::first();
+
             if ($setup && $setup->smtp_email && $setup->smtp_app_password) {
                 Config::set('mail.mailers.smtp.username', $setup->smtp_email);
                 Config::set('mail.mailers.smtp.password', $setup->smtp_app_password);
