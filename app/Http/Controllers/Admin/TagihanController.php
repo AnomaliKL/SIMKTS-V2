@@ -7,6 +7,8 @@ use App\Models\Tagihan;
 use App\Models\Penghuni;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\NotifikasiPembayaranMail;
 
 class TagihanController extends Controller
 {
