@@ -18,7 +18,8 @@ class BookingController extends Controller
                     ->latest()
                     ->get();
 
-        return view('pengunjung.booking', compact('bookings'));
+        // return view('pengunjung.booking', compact('bookings'));
+        return redirect()->route('home');
     }
 
     /**
@@ -30,7 +31,10 @@ class BookingController extends Controller
             'id_kamar'  => 'required|exists:kamars,id_kamar',
             'tgl_masuk' => 'required|date|after_or_equal:today',
             'lama_sewa' => 'required|integer|min:1|max:60',
-            'nik_ktp'   => 'required|string|min:16',
+            'nik_ktp'   => 'required|digits:16', // Menggunakan digits:16 agar presisi mendeteksi angka KTP
+        ], [
+            'nik_ktp.digits' => 'Nomor NIK KTP harus tepat 16 digit angka.',
+            'tgl_masuk.after_or_equal' => 'Tanggal masuk tidak boleh di hari sebelumnya.',
         ]);
 
         // Cek apakah user sudah punya booking pending atau diterima

@@ -7,10 +7,12 @@
     <title>Welcome to SIMKTS</title>
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <!-- Tambahkan CDN SweetAlert2 jika belum dipasang di app.js -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 
 <body class="bg-slate-950 text-slate-100 antialiased min-h-screen selection:bg-blue-600 selection:text-white"
-    x-data="{ showModal: false, selectedId: '', selectedNomor: '' }">
+    x-data="{ showModal: {{ $errors->any() ? 'true' : 'false' }}, selectedId: '{{ old('id_kamar') }}', selectedNomor: '' }">
 
     @if (session('success') || session('error') || session('warning'))
         <div x-data="{ open: true }" x-show="open" x-transition
@@ -69,17 +71,13 @@
     </nav>
 
     <section class="relative bg-slate-950 border-b border-slate-900 py-20 lg:py-28 overflow-hidden">
-        <!-- 🛠️ BACKGROUND IMAGE BERBASIS ASSET (Mirip Login/Register) -->
         <div style="background-image:url('{{ asset('assets/img/BG-LOGIN.avif') }}')"
             class="absolute inset-0 bg-cover bg-center opacity-70 mix-blend-luminosity">
         </div>
-
-        <!-- Efek gradasi radial tambahan agar gambar menyatu dengan warna gelap background -->
         <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(59,130,246,0.12),transparent_55%)]">
         </div>
         <div class="absolute inset-0 bg-gradient-to-b from-transparent to-slate-950/90"></div>
 
-        <!-- KONTEN -->
         <div class="max-w-4xl mx-auto text-center px-4 sm:px-6 relative z-10 space-y-6">
             <h1 class="text-4xl sm:text-5xl lg:text-6xl font-black text-white tracking-tight leading-none">
                 Hunian Nyaman & <span
@@ -168,38 +166,27 @@
                             @endguest
 
                             @auth
-
-                                {{-- Pengunjung boleh booking --}}
                                 @if (Auth::user()->role == 'pengunjung')
                                     <button
                                         @click="showModal = true; selectedId='{{ $kamar->id_kamar }}'; selectedNomor='{{ $kamar->no_kamar }}'"
                                         class="w-full py-2.5 bg-slate-950 hover:bg-blue-600 text-slate-300 hover:text-white border border-slate-800 hover:border-blue-500 text-xs font-bold rounded-xl shadow-sm transition duration-200">
-
                                         Booking Sekarang
-
                                     </button>
                                 @endif
 
-                                {{-- Penghuni tidak boleh booking lagi --}}
                                 @if (Auth::user()->role == 'penghuni')
                                     <a href="{{ route('penghuni.dashboard') }}"
                                         class="block w-full py-2.5 bg-emerald-600 text-white rounded-xl text-center">
-
                                         Dashboard Penghuni
-
                                     </a>
                                 @endif
 
-                                {{-- Admin --}}
                                 @if (Auth::user()->role == 'admin')
                                     <a href="{{ route('admin.dashboard') }}"
                                         class="block w-full py-2.5 bg-blue-600 text-white rounded-xl text-center">
-
                                         Dashboard Admin
-
                                     </a>
                                 @endif
-
                             @endauth
                         @else
                             <button disabled
@@ -219,6 +206,7 @@
     </main>
 
     @auth
+        <!-- MODAL DENGAN DETEKSI ERROR VALIDASI -->
         <div x-show="showModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
             x-cloak x-transition>
             <div @click.away="showModal = false"
@@ -232,6 +220,18 @@
                         class="text-slate-400 hover:text-white text-lg font-bold">&times;</button>
                 </div>
 
+                <!-- ALERT JIKA VALIDASI GAGALSecara Keseluruhan -->
+                @if ($errors->any())
+                    <div class="bg-rose-500/10 border border-rose-500/20 text-rose-400 p-3 rounded-xl text-xs space-y-1">
+                        <span class="font-bold">⚠️ Data tidak valid:</span>
+                        <ul class="list-disc list-inside">
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+
                 <form action="{{ route('pengunjung.booking.store') }}" method="POST" class="space-y-4">
                     @csrf
                     <input type="hidden" name="id_kamar" :value="selectedId">
@@ -244,17 +244,22 @@
                     <div>
                         <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">Tanggal
                             Mulai Ngekos</label>
-                        <input type="date" name="tgl_masuk" required
-                            class="w-full text-xs bg-slate-950 border border-slate-800 rounded-xl p-3 text-slate-200 focus:outline-none focus:border-blue-500 [color-scheme:dark] transition">
+                        <input type="date" name="tgl_masuk" value="{{ old('tgl_masuk') }}" required
+                            class="w-full text-xs bg-slate-950 border @error('tgl_masuk') border-rose-500 @else border-slate-800 @enderror rounded-xl p-3 text-slate-200 focus:outline-none focus:border-blue-500 [color-scheme:dark] transition">
+                        @error('tgl_masuk')
+                            <span class="text-[10px] text-rose-500 mt-1 block">{{ $message }}</span>
+                        @enderror
                     </div>
 
                     <div>
                         <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">Lama Sewa
-                            (Bulan)
-                        </label>
-                        <input type="number" name="lama_sewa" min="1" max="60" required
-                            placeholder="Contoh: 12"
-                            class="w-full text-xs bg-slate-950 border border-slate-800 rounded-xl p-3 text-slate-200 focus:outline-none focus:border-blue-500 transition">
+                            (Bulan)</label>
+                        <input type="number" name="lama_sewa" min="1" max="60"
+                            value="{{ old('lama_sewa') }}" required placeholder="Contoh: 12"
+                            class="w-full text-xs bg-slate-950 border @error('lama_sewa') border-rose-500 @else border-slate-800 @enderror rounded-xl p-3 text-slate-200 focus:outline-none focus:border-blue-500 transition">
+                        @error('lama_sewa')
+                            <span class="text-[10px] text-rose-500 mt-1 block">{{ $message }}</span>
+                        @enderror
                         <span class="text-[10px] text-slate-500 block mt-1">Masukkan lama sewa dalam satuan bulan (minimal
                             1 bulan).</span>
                     </div>
@@ -262,8 +267,12 @@
                     <div>
                         <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">Nomor NIK
                             KTP (16 Digit)</label>
-                        <input type="number" name="nik_ktp" required placeholder="Masukan NIK KTP Anda"
-                            class="w-full text-xs bg-slate-950 border border-slate-800 rounded-xl p-3 text-slate-200 focus:outline-none focus:border-blue-500 transition">
+                        <input type="number" name="nik_ktp" value="{{ old('nik_ktp') }}" required
+                            placeholder="Masukan NIK KTP Anda"
+                            class="w-full text-xs bg-slate-950 border @error('nik_ktp') border-rose-500 @else border-slate-800 @enderror rounded-xl p-3 text-slate-200 focus:outline-none focus:border-blue-500 transition">
+                        @error('nik_ktp')
+                            <span class="text-[10px] text-rose-500 mt-1 block">{{ $message }}</span>
+                        @enderror
                         <span class="text-[10px] text-slate-500 block mt-1">Data NIK sah digunakan petugas untuk
                             memvalidasi kartu identitas.</span>
                     </div>
@@ -280,20 +289,28 @@
         </div>
     @endauth
 
+    <!-- POPUP KETIKA BERHASIL: MENUNGGU VERIFIKASI ADMIN -->
     @if (session('booking_success'))
         <script>
             document.addEventListener('DOMContentLoaded', function() {
-
                 Swal.fire({
-                    icon: 'success',
-                    title: 'Info Booking',
-                    text: '{{ session('booking_success') }}',
-                    confirmButtonText: 'OK',
+                    icon: 'info',
+                    title: 'Pengajuan Berhasil Terkirim!',
+                    html: `<div class="text-sm space-y-2">
+                            <p>${"{{ session('booking_success') }}"}</p>
+                            <span class="inline-block mt-2 bg-amber-500/10 border border-amber-500/20 text-amber-400 px-3 py-1 rounded-full text-xs font-bold">
+                                ⏳ Menunggu Verifikasi Admin
+                            </span>
+                           </div>`,
+                    confirmButtonText: 'Kembali ke Dashboard',
                     confirmButtonColor: '#2563eb',
                     background: '#1e293b',
-                    color: '#fff'
+                    color: '#fff',
+                    willClose: () => {
+                        // Opsional: Langsung redirect pengunjung ke dashboard setelah klik OK
+                        window.location.href = "/dashboard";
+                    }
                 });
-
             });
         </script>
     @endif
