@@ -131,7 +131,7 @@ class TagihanController extends Controller
                     ]
                 ],
                 'subject' => "Notifikasi Pembayaran Tagihan: DITERIMA",
-                'html'    => view('emails.notifikasi-pembayaran', compact('tagihan', 'status'))->render(),
+                'html'    => view('emails.notifikasi_pembayaran', compact('tagihan', 'status'))->render(),
             ]);
 
         if ($response->failed()) {
