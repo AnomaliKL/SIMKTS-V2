@@ -105,8 +105,9 @@ class TagihanController extends Controller
         return back()->with('success', $jumlahGenerate . ' data tagihan baru berhasil dibuat maju untuk periode ' . $stringBulanTahun . '.');
     }
 
-    public function validatePayment($id)
-    {$tagihan = Tagihan::findOrFail($id);
+    public function validatePayment(Request $request, $id)
+    {
+        $tagihan = Tagihan::findOrFail($id);
         $tagihan->update(['status' => 'lunas']);
 
         // Kirim Email Sukses
