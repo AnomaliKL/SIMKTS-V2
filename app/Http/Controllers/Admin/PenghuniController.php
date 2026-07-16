@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Kamar;
 use App\Models\Penghuni;
 use App\Models\User;
+use App\Models\Booking;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -194,6 +195,8 @@ class PenghuniController extends Controller
             ]);
 
             DB::commit();
+
+            Booking::where('id_user', $penghuni->id_user)->delete();
 
             return redirect()->route('admin.penghuni.index')
                 ->with('success', 'Penghuni berhasil checkout.');
