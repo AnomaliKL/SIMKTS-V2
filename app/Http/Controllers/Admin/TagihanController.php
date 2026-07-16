@@ -117,7 +117,7 @@ class TagihanController extends Controller
         return back()->with('success', 'Pembayaran berhasil divalidasi & email terkirim.');
     }
 
-    public function rejectPayment($id)
+    public function rejectPayment(Request $request, $id)
     {
        // Validasi agar admin wajib mengisi teks alasannya
         $request->validate([
