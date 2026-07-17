@@ -14,21 +14,22 @@ class KamarController extends Controller
     {
         $kamars = Kamar::orderBy('no_kamar', 'asc')->get();
 
-    // Mengambil nomor kamar paling terakhir di database
-    $kamarTerakhir = Kamar::orderBy('id_kamar', 'desc')->first();
+        // Mengambil nomor kamar paling terakhir di database
+        $kamarTerakhir = Kamar::orderBy('id_kamar', 'desc')->first();
 
-    if ($kamarTerakhir) {
-        // Mengambil angka saja dari format "KM-052" -> 52
-        $angkaTerakhir = (int) filter_var($kamarTerakhir->no_kamar, FILTER_SANITIZE_NUMBER_INT);
-        $nomorBerikutnya = $angkaTerakhir + 1;
-    } else {
-        $nomorBerikutnya = 1;
-    }
+        if ($kamarTerakhir) {
+            // KUNCI PERBAIKAN: Menggunakan preg_replace untuk menghapus karakter selain angka (menghilangkan tanda minus/strip)
+            $angkaTerakhir = (int) preg_replace('/[^0-9]/', '', $kamarTerakhir->no_kamar);
+            $nomorBerikutnya = $angkaTerakhir + 1;
+        } else {
+            $nomorBerikutnya = 1;
+        }
 
-    // Mengubah angka 1 menjadi "KM-001", angka 52 menjadi "KM-052"
-    $next_no_kamar = 'KM-' . str_pad($nomorBerikutnya, 3, '0', STR_PAD_LEFT);
+        // Mengubah angka 51 menjadi "KM-051" atau "K-051" sesuai keinginan Anda.
+        // Berdasarkan seeder sebelumnya, disarankan menggunakan format "KM-" agar serasi.
+        $next_no_kamar = 'KM-' . str_pad($nomorBerikutnya, 3, '0', STR_PAD_LEFT);
 
-    return view('admin.data_kamar', compact('kamars', 'next_no_kamar'));
+        return view('admin.data_kamar', compact('kamars', 'next_no_kamar'));
     }
 
     public function store(Request $request)
@@ -36,7 +37,7 @@ class KamarController extends Controller
         $rules = [
             'no_kamar'   => 'required|unique:kamars,no_kamar',
             'deskripsi'  => 'nullable',
-            'harga_sewa' => 'required|numeric|min:0', // <-- Min 0 agar tidak minus
+            'harga_sewa' => 'required|numeric|min:0',
             'foto'       => 'nullable|image|mimes:jpg,jpeg,png'
         ];
 
@@ -71,7 +72,6 @@ class KamarController extends Controller
         }
     }
 
-    // Mengubah parameter $id untuk mencocokkan Primary Key asli
     public function update(Request $request, $id)
     {
         try {
@@ -80,7 +80,7 @@ class KamarController extends Controller
             $rules = [
                 'no_kamar'   => 'required|unique:kamars,no_kamar,'.$kamar->id_kamar.',id_kamar',
                 'deskripsi'  => 'nullable',
-                'harga_sewa' => 'required|numeric|min:0', // <-- Min 0 agar tidak minus
+                'harga_sewa' => 'required|numeric|min:0',
                 'foto'       => 'nullable|image'
             ];
 
@@ -116,14 +116,11 @@ class KamarController extends Controller
         }
     }
 
-    // Mengubah pencarian data berdasarkan $id int konvensional agar form submit Route terbaca
     public function destroy($id)
     {
         try {
-            // Menggunakan findOrFail jika binding model di route custom/berbeda
             $kamar = Kamar::findOrFail($id);
 
-            // Proteksi: Mencegah kamar terhapus jika status sedang Terisi
             if (strtolower($kamar->status_kamar) === 'terisi') {
                 throw new \Exception('Kamar tidak dapat dihapus karena masih digunakan oleh penghuni aktif.');
             }
