@@ -9,30 +9,62 @@
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
-    <!-- Posisikan library intl-tel-input di sini -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intl-tel-input.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intl-tel-input.min.js"></script>
+    <!-- Panggil CSS intl-tel-input secara lokal hanya di halaman register -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/18.2.1/css/intl-tel-input.css">
 
     <style>
-        /* CSS Kustom Perbaikan untuk Tema Gelap SIMKTS */
         .iti {
             width: 100% !important;
             display: block !important;
         }
 
-        /* Geser teks input utama ke kanan agar tidak menabrak bendera */
         .iti input[type="tel"] {
-            padding-left: 52px !important;
+            padding-left: 90px !important;
         }
 
-        /* Desain Dropdown List Negara */
+        .iti__selected-flag {
+            background-color: transparent !important;
+            padding-left: 12px !important;
+        }
+
+        .iti__selected-dial-code {
+            color: #cbd5e1 !important;
+            font-size: 12px !important;
+            font-weight: 600 !important;
+        }
+
+        /* --- TAMPILAN DROPDOWN NEGARA STANDAR (DARK MODE) --- */
+        .iti__dropdown-content,
+        div.iti__dropdown-content,
         .iti__country-list {
             background-color: #0f172a !important;
-            border: 1px solid #1e293b !important;
             color: #cbd5e1 !important;
-            text-align: left;
-            z-index: 50 !important;
-            max-width: 300px;
+            border: none !important;
+        }
+
+        .iti__dropdown-content {
+            border: 1px solid #1e293b !important;
+            border-radius: 8px !important;
+            padding: 0 !important;
+            overflow: hidden !important;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5) !important;
+
+            /* Memaksa posisi dropdown jatuh ke bawah input secara konsisten */
+            top: 100% !important;
+            bottom: auto !important;
+            margin-top: 4px !important;
+        }
+
+        .iti__country-list {
+            z-index: 9999 !important;
+            width: 100% !important;
+            min-width: 300px !important;
+            max-height: 250px !important;
+            margin: 0 !important;
+        }
+
+        .iti__country {
+            padding: 8px 12px !important;
         }
 
         .iti__country:hover {
@@ -40,16 +72,14 @@
             color: #ffffff !important;
         }
 
-        /* Desain area tombol bendera yang terpilih */
-        .iti__selected-flag {
-            background-color: #0f172a !important;
-            border-radius: 12px 0 0 12px;
-            padding-left: 12px !important;
-        }
-
         .iti__country-name,
         .iti__dial-code {
             color: #cbd5e1 !important;
+        }
+
+        /* KUNCI 2: Memastikan sisa container search box disembunyikan total */
+        .iti__search-container {
+            display: none !important;
         }
     </style>
 </head>
@@ -85,12 +115,6 @@
                 class="w-full lg:w-5/12 bg-slate-950 flex items-center justify-center p-6 sm:p-12 shadow-2xl relative z-10">
                 <div class="w-full max-w-md space-y-6" x-data="{ showPassword: false }">
 
-                    <a href="{{ route('home') }}"
-                        class="text-slate-500 hover:text-blue-400 text-xs font-bold inline-flex items-center space-x-2 transition duration-150 group">
-                        <img src="{{ asset('assets/icon/angle-circle-left.png') }}"
-                            class="w-3.5 h-3.5 object-contain opacity-60">
-                        <span>Kembali ke Beranda</span>
-                    </a>
 
                     <div class="space-y-1 pt-2">
                         <div class="flex items-center space-x-2">
@@ -129,6 +153,7 @@
                         <form action="{{ route('register.process') }}" method="POST" class="space-y-4">
                             @csrf
 
+                            <!-- NAMA LENGKAP -->
                             <div class="space-y-1.5">
                                 <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider">Nama
                                     Lengkap</label>
@@ -143,6 +168,7 @@
                                 </div>
                             </div>
 
+                            <!-- EMAIL ADDRESS -->
                             <div class="space-y-1.5">
                                 <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider">Email
                                     Address</label>
@@ -157,19 +183,20 @@
                                 </div>
                             </div>
 
+                            <!-- INPUT NO WHATSAPP -->
                             <div class="space-y-1.5">
                                 <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider">No.
                                     WhatsApp</label>
-                                <div class="relative rounded-xl overflow-hidden">
-                                    <!-- Input Utama -->
+                                <div
+                                    class="relative rounded-xl bg-slate-900 border border-slate-800 focus-within:border-blue-500 transition">
                                     <input type="tel" id="phone" name="no_hp_input" value="{{ old('no_hp') }}"
                                         required
                                         class="w-full text-xs bg-slate-900 border border-slate-800 rounded-xl pr-4 py-3 text-slate-200 focus:outline-none focus:border-blue-500 transition">
-                                    <!-- Input Hidden -->
                                     <input type="hidden" id="full_phone" name="no_hp">
                                 </div>
                             </div>
 
+                            <!-- PASSWORD -->
                             <div class="space-y-1.5">
                                 <label
                                     class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider">Password</label>
@@ -191,6 +218,7 @@
                                 </div>
                             </div>
 
+                            <!-- KONFIRMASI PASSWORD -->
                             <div class="space-y-1.5">
                                 <label
                                     class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider">Konfirmasi
@@ -228,34 +256,44 @@
     </div>
 
     <script>
-        const phoneInputField = document.querySelector("#phone");
-        const fullPhoneInput = document.querySelector("#full_phone");
+        document.addEventListener("DOMContentLoaded", function() {
+            const phoneInputField = document.querySelector("#phone");
+            const fullPhoneInput = document.querySelector("#full_phone");
 
-        const phoneInput = window.intlTelInput(phoneInputField, {
-            initialCountry: "id",
-            allowDropdown: true,
-            dropdownContainer: document.body,
-            utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
-        });
+            if (phoneInputField && window.intlTelInput) {
+                const phoneInput = window.intlTelInput(phoneInputField, {
+                    initialCountry: "id",
+                    allowDropdown: true,
+                    separateDialCode: true,
+                    // KUNCI UTAMA: Matikan search box bawaan v18+ dan aktifkan gulir keyboard
+                    countrySearch: false,
+                    dropdownContainer: document.body,
+                    utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/18.2.1/js/utils.js"
+                });
 
-        phoneInputField.addEventListener("input", function() {
-            let value = phoneInputField.value;
-            if (value.startsWith("0")) {
-                phoneInputField.value = value.substring(1);
+                // Otomatis hapus angka 0 di depan saat mulai mengetik
+                phoneInputField.addEventListener("input", function() {
+                    let value = phoneInputField.value;
+                    if (value.startsWith("0")) {
+                        phoneInputField.value = value.substring(1);
+                    }
+                });
+
+                const form = document.querySelector("form");
+                if (form) {
+                    form.addEventListener("submit", function(e) {
+                        let value = phoneInputField.value;
+                        if (value.startsWith("0")) {
+                            phoneInputField.value = value.substring(1);
+                        }
+
+                        // Ambil nomor gabungan bersih tanpa karakter '+' untuk disubmit ke backend
+                        const fullNumber = phoneInput.getNumber().replace('+', '');
+                        fullPhoneInput.value = fullNumber;
+                    });
+                }
             }
         });
-
-        const form = document.querySelector("form");
-        if (form) {
-            form.addEventListener("submit", function(e) {
-                let value = phoneInputField.value;
-                if (value.startsWith("0")) {
-                    phoneInputField.value = value.substring(1);
-                }
-                const fullNumber = phoneInput.getNumber().replace('+', '');
-                fullPhoneInput.value = fullNumber;
-            });
-        }
     </script>
 </body>
 
