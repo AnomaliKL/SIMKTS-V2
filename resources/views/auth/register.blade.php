@@ -8,8 +8,50 @@
     <title>Daftar Akun - SIMKTS</title>
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+
+    <!-- Posisikan library intl-tel-input di sini -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intl-tel-input.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intl-tel-input.min.js"></script>
+
+    <style>
+        /* CSS Kustom Perbaikan untuk Tema Gelap SIMKTS */
+        .iti {
+            width: 100% !important;
+            display: block !important;
+        }
+
+        /* Geser teks input utama ke kanan agar tidak menabrak bendera */
+        .iti input[type="tel"] {
+            padding-left: 52px !important;
+        }
+
+        /* Desain Dropdown List Negara */
+        .iti__country-list {
+            background-color: #0f172a !important;
+            border: 1px solid #1e293b !important;
+            color: #cbd5e1 !important;
+            text-align: left;
+            z-index: 50 !important;
+            max-width: 300px;
+        }
+
+        .iti__country:hover {
+            background-color: #1e293b !important;
+            color: #ffffff !important;
+        }
+
+        /* Desain area tombol bendera yang terpilih */
+        .iti__selected-flag {
+            background-color: #0f172a !important;
+            border-radius: 12px 0 0 12px;
+            padding-left: 12px !important;
+        }
+
+        .iti__country-name,
+        .iti__dial-code {
+            color: #cbd5e1 !important;
+        }
+    </style>
 </head>
 
 <body class="bg-slate-950 text-slate-100 antialiased h-full font-sans">
@@ -44,7 +86,7 @@
                 <div class="w-full max-w-md space-y-6" x-data="{ showPassword: false }">
 
                     <a href="{{ route('home') }}"
-                        class=" text-slate-500 hover:text-blue-400 text-xs font-bold inline-flex items-center space-x-2 transition duration-150 group">
+                        class="text-slate-500 hover:text-blue-400 text-xs font-bold inline-flex items-center space-x-2 transition duration-150 group">
                         <img src="{{ asset('assets/icon/angle-circle-left.png') }}"
                             class="w-3.5 h-3.5 object-contain opacity-60">
                         <span>Kembali ke Beranda</span>
@@ -61,17 +103,10 @@
                     @if (session('success'))
                         <div
                             class="bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs p-4 rounded-xl">
-                            <div class="font-bold mb-2">
-                                ✅ {{ session('success') }}
-                            </div>
-
-                            <p class="text-emerald-300">
-                                Silakan
-                                <a href="{{ route('login') }}" class="font-bold underline hover:text-white transition">
-                                    Login di sini
-                                </a>
-                                untuk masuk.
-                            </p>
+                            <div class="font-bold mb-2">✅ {{ session('success') }}</div>
+                            <p class="text-emerald-300">Silakan <a href="{{ route('login') }}"
+                                    class="font-bold underline hover:text-white transition">Login di sini</a> untuk
+                                masuk.</p>
                         </div>
                     @endif
 
@@ -82,7 +117,6 @@
                                 <span>⚠️</span>
                                 <span>Gagal mendaftarkan akun:</span>
                             </div>
-
                             <ul class="list-disc list-inside text-[11px] text-slate-400 space-y-0.5">
                                 @foreach ($errors->all() as $error)
                                     <li>{{ $error }}</li>
@@ -126,13 +160,12 @@
                             <div class="space-y-1.5">
                                 <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider">No.
                                     WhatsApp</label>
-                                <div class="relative rounded-xl overflow-hidden text-slate-900">
-                                    <!-- Input utama untuk user mengetik -->
+                                <div class="relative rounded-xl overflow-hidden">
+                                    <!-- Input Utama -->
                                     <input type="tel" id="phone" name="no_hp_input" value="{{ old('no_hp') }}"
                                         required
-                                        class="w-full text-xs bg-slate-900 border border-slate-800 rounded-xl pl-14 pr-4 py-3 text-slate-200 focus:outline-none focus:border-blue-500 transition">
-
-                                    <!-- Input tersembunyi untuk mengirim nomor lengkap + kode negara ke backend -->
+                                        class="w-full text-xs bg-slate-900 border border-slate-800 rounded-xl pr-4 py-3 text-slate-200 focus:outline-none focus:border-blue-500 transition">
+                                    <!-- Input Hidden -->
                                     <input type="hidden" id="full_phone" name="no_hp">
                                 </div>
                             </div>
@@ -148,7 +181,6 @@
                                     <input :type="showPassword ? 'text' : 'password'" name="password" required
                                         placeholder="Buat password baru..."
                                         class="w-full text-xs bg-slate-900 border border-slate-800 rounded-xl pl-9 pr-12 py-3 text-slate-200 focus:outline-none focus:border-blue-500 tracking-wide transition">
-
                                     <button type="button" @click="showPassword = !showPassword"
                                         class="absolute inset-y-0 right-0 flex items-center pr-3.5 text-slate-400 hover:text-white transition focus:outline-none text-xs">
                                         <img :src="showPassword ? '{{ asset('assets/icon/eye.png') }}' :
@@ -179,21 +211,15 @@
                                     class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-full tracking-wide shadow-xl shadow-blue-600/10 transition duration-200 cursor-pointer uppercase flex items-center justify-center space-x-2">
                                     <span>Daftar Akun</span>
                                 </button>
-
                                 <div class="text-center mt-4 mb-6">
                                     <span class="text-xs text-slate-500 font-medium">Sudah memiliki akun? </span>
                                     <a href="{{ route('login') }}"
-                                        class="text-xs text-blue-500 hover:text-blue-400 font-bold transition duration-150 underline">
-                                        Login di sini
-                                    </a>
+                                        class="text-xs text-blue-500 hover:text-blue-400 font-bold transition duration-150 underline">Login
+                                        di sini</a>
                                 </div>
                             </div>
                         </form>
                     @endif
-
-                    {{-- <div class="text-center pt-4 border-t border-slate-900/60">
-                        <small class="text-[10px] text-slate-600 font-medium">&copy; 2026 SIMKTS — Kontrakan 3 Saudara</small>
-                    </div> --}}
 
                 </div>
             </div>
@@ -205,7 +231,6 @@
         const phoneInputField = document.querySelector("#phone");
         const fullPhoneInput = document.querySelector("#full_phone");
 
-        // Panggil library intl-tel-input
         const phoneInput = window.intlTelInput(phoneInputField, {
             initialCountry: "id",
             allowDropdown: true,
@@ -213,53 +238,25 @@
             utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
         });
 
-        // Validasi & Pembersihan otomatis untuk SEMUA NEGARA saat user mengetik
         phoneInputField.addEventListener("input", function() {
             let value = phoneInputField.value;
-            // Jika karakter pertama yang diketik adalah '0', langsung hapus tanpa peduli negaranya apa
             if (value.startsWith("0")) {
                 phoneInputField.value = value.substring(1);
             }
         });
 
-        // Proteksi tambahan saat form disubmit untuk semua negara
         const form = document.querySelector("form");
-        form.addEventListener("submit", function(e) {
-            let value = phoneInputField.value;
-
-            if (value.startsWith("0")) {
-                phoneInputField.value = value.substring(1);
-            }
-
-            // Ambil nomor format internasional penuh tanpa tanda '+' (contoh: 6012345678 untuk Malaysia)
-            const fullNumber = phoneInput.getNumber().replace('+', '');
-            fullPhoneInput.value = fullNumber;
-        });
+        if (form) {
+            form.addEventListener("submit", function(e) {
+                let value = phoneInputField.value;
+                if (value.startsWith("0")) {
+                    phoneInputField.value = value.substring(1);
+                }
+                const fullNumber = phoneInput.getNumber().replace('+', '');
+                fullPhoneInput.value = fullNumber;
+            });
+        }
     </script>
-
-    <style>
-        /* Sedikit penyesuaian CSS agar tampilan dropdown intl-tel-input serasi dengan tema gelap SIMKTS */
-        .iti {
-            width: 100%;
-        }
-
-        .iti__country-list {
-            background-color: #0f172a !important;
-            border: 1px solid #1e293b !important;
-            color: #cbd5e1 !important;
-            text-align: left;
-        }
-
-        .iti__country:hover {
-            background-color: #1e293b !important;
-            color: #ffffff !important;
-        }
-
-        .iti__selected-flag {
-            background-color: #0f172a !important;
-            border-radius: 12px 0 0 12px;
-        }
-    </style>
 </body>
 
 </html>
