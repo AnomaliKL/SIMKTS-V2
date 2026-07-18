@@ -76,7 +76,7 @@ class AuthController extends Controller
         $request->validate([
             'name'      => 'required|string|max:100',
             'email'     => 'required|email|unique:users,email',
-            'no_hp'     => 'required|max:20',
+            'no_hp'     => 'required|numeric',
             'password'  => 'required|min:6|confirmed',
         ],[
             'email.unique' => 'Email sudah digunakan.',

@@ -45,7 +45,7 @@ class PenghuniController extends Controller
         $rules = [
             'jenis_user' => 'required|in:baru,lama',
             'nik' => 'required|unique:penghunis,nik_ktp|digits_between:16,20',
-            'hp' => 'required|max:20',
+            'hp' => 'required|digits_between:10,20',
             'id_kamar' => 'required|exists:kamars,id_kamar',
             'tgl_masuk' => 'required|date|after_or_equal:today',
         ];

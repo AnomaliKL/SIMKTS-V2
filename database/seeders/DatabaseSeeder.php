@@ -54,7 +54,7 @@ class DatabaseSeeder extends Seeder
 
         for ($i = 1; $i <= 55; $i++) {
             $kamarIds[] = DB::table('kamars')->insertGetId([
-                'no_kamar' => 'K-'.str_pad($i, 3, '0', STR_PAD_LEFT),
+                'no_kamar' => 'KM-'.str_pad($i, 3, '0', STR_PAD_LEFT),
                 'deskripsi' => fake()->randomElement($deskripsiPilihan),
                 'harga_sewa' => fake()->randomElement($hargaPilihan),
                 'status_kamar' => fake()->randomElement(['Kosong', 'Terisi']),

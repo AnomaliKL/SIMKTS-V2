@@ -8,6 +8,8 @@
     <title>Daftar Akun - SIMKTS</title>
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intl-tel-input.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intl-tel-input.min.js"></script>
 </head>
 
 <body class="bg-slate-950 text-slate-100 antialiased h-full font-sans">
@@ -124,14 +126,14 @@
                             <div class="space-y-1.5">
                                 <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider">No.
                                     WhatsApp</label>
-                                <div class="relative">
-                                    <span class="absolute inset-y-0 left-0 flex items-center pl-3">
-                                        <img src="{{ asset('assets/icon/whatsapp.png') }}"
-                                            class="w-3.5 h-3.5 object-contain opacity-60">
-                                    </span>
-                                    <input type="text" name="no_hp" value="{{ old('no_hp') }}" required
-                                        placeholder="08123xxxx"
-                                        class="w-full text-xs bg-slate-900 border border-slate-800 rounded-xl pl-9 pr-4 py-3 text-slate-200 focus:outline-none focus:border-blue-500 transition">
+                                <div class="relative rounded-xl overflow-hidden text-slate-900">
+                                    <!-- Input utama untuk user mengetik -->
+                                    <input type="tel" id="phone" name="no_hp_input" value="{{ old('no_hp') }}"
+                                        required
+                                        class="w-full text-xs bg-slate-900 border border-slate-800 rounded-xl pl-14 pr-4 py-3 text-slate-200 focus:outline-none focus:border-blue-500 transition">
+
+                                    <!-- Input tersembunyi untuk mengirim nomor lengkap + kode negara ke backend -->
+                                    <input type="hidden" id="full_phone" name="no_hp">
                                 </div>
                             </div>
 
@@ -199,6 +201,65 @@
         </div>
     </div>
 
+    <script>
+        const phoneInputField = document.querySelector("#phone");
+        const fullPhoneInput = document.querySelector("#full_phone");
+
+        // Panggil library intl-tel-input
+        const phoneInput = window.intlTelInput(phoneInputField, {
+            initialCountry: "id",
+            allowDropdown: true,
+            dropdownContainer: document.body,
+            utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
+        });
+
+        // Validasi & Pembersihan otomatis untuk SEMUA NEGARA saat user mengetik
+        phoneInputField.addEventListener("input", function() {
+            let value = phoneInputField.value;
+            // Jika karakter pertama yang diketik adalah '0', langsung hapus tanpa peduli negaranya apa
+            if (value.startsWith("0")) {
+                phoneInputField.value = value.substring(1);
+            }
+        });
+
+        // Proteksi tambahan saat form disubmit untuk semua negara
+        const form = document.querySelector("form");
+        form.addEventListener("submit", function(e) {
+            let value = phoneInputField.value;
+
+            if (value.startsWith("0")) {
+                phoneInputField.value = value.substring(1);
+            }
+
+            // Ambil nomor format internasional penuh tanpa tanda '+' (contoh: 6012345678 untuk Malaysia)
+            const fullNumber = phoneInput.getNumber().replace('+', '');
+            fullPhoneInput.value = fullNumber;
+        });
+    </script>
+
+    <style>
+        /* Sedikit penyesuaian CSS agar tampilan dropdown intl-tel-input serasi dengan tema gelap SIMKTS */
+        .iti {
+            width: 100%;
+        }
+
+        .iti__country-list {
+            background-color: #0f172a !important;
+            border: 1px solid #1e293b !important;
+            color: #cbd5e1 !important;
+            text-align: left;
+        }
+
+        .iti__country:hover {
+            background-color: #1e293b !important;
+            color: #ffffff !important;
+        }
+
+        .iti__selected-flag {
+            background-color: #0f172a !important;
+            border-radius: 12px 0 0 12px;
+        }
+    </style>
 </body>
 
 </html>
