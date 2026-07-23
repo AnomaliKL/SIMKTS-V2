@@ -8,6 +8,77 @@
     <title>Dashboard Penghuni - SIMKTS</title>
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+
+    <!-- CSS intl-tel-input secara lokal hanya di Dashboard Penghuni -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/18.2.1/css/intl-tel-input.css">
+
+    <style>
+        .iti {
+            width: 100% !important;
+            display: block !important;
+        }
+
+        .iti input[type="tel"] {
+            padding-left: 90px !important;
+        }
+
+        .iti__selected-flag {
+            background-color: transparent !important;
+            padding-left: 12px !important;
+        }
+
+        .iti__selected-dial-code {
+            color: #cbd5e1 !important;
+            font-size: 12px !important;
+            font-weight: 600 !important;
+        }
+
+        /* --- TAMPILAN DROPDOWN NEGARA STANDAR (DARK MODE) --- */
+        .iti__dropdown-content,
+        div.iti__dropdown-content,
+        .iti__country-list {
+            background-color: #0f172a !important;
+            color: #cbd5e1 !important;
+            border: none !important;
+        }
+
+        .iti__dropdown-content {
+            border: 1px solid #1e293b !important;
+            border-radius: 8px !important;
+            padding: 0 !important;
+            overflow: hidden !important;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5) !important;
+            top: 100% !important;
+            bottom: auto !important;
+            margin-top: 4px !important;
+        }
+
+        .iti__country-list {
+            z-index: 9999 !important;
+            width: 100% !important;
+            min-width: 300px !important;
+            max-height: 250px !important;
+            margin: 0 !important;
+        }
+
+        .iti__country {
+            padding: 8px 12px !important;
+        }
+
+        .iti__country:hover {
+            background-color: #1e293b !important;
+            color: #ffffff !important;
+        }
+
+        .iti__country-name,
+        .iti__dial-code {
+            color: #cbd5e1 !important;
+        }
+
+        .iti__search-container {
+            display: none !important;
+        }
+    </style>
 </head>
 
 <body class="bg-slate-950 text-slate-100 antialiased h-full font-sans flex flex-col" x-data="{
@@ -79,32 +150,6 @@
 
     <main class="flex-1 max-w-7xl mx-auto w-full p-4 sm:p-6 lg:p-8 space-y-6 overflow-y-auto">
 
-        {{-- @if ($current_tagihan && strtolower($current_tagihan->status) === 'belum_bayar')
-            <div
-                class="bg-rose-500/10 border border-rose-500/20 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-sm">
-                <div class="flex items-start space-x-3">
-                    <span class="text-xl text-rose-400 mt-0.5">⚠️</span>
-                    <div>
-                        <h5 class="text-xs font-black text-rose-400 uppercase tracking-wider">Tagihan Bulan Ini Belum
-                            Dibayar</h5>
-                        <p class="text-slate-400 text-xs font-medium mt-1">Segera lakukan transfer sebesar <strong
-                                class="text-slate-200 font-extrabold font-mono">Rp
-                                {{ number_format($current_tagihan->jumlah_tagihan, 0, ',', '.') }}</strong> sebelum masa
-                            tenggat jatuh tempo habis.</p>
-                    </div>
-                </div>
-                <button
-                    @click="
-                            uploadData.id = '{{ $current_tagihan->id_tagihan }}';
-                            uploadData.bulan = '{{ \Carbon\Carbon::parse($current_tagihan->bulan_tagihan)->isoFormat('MMMM YYYY') }}';
-                            showUploadModal = true;
-                        "
-                    class="px-4 py-2.5 bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold rounded-xl shadow-md shadow-rose-600/10 cursor-pointer transition shrink-0">
-                    Bayar Sekarang
-                </button>
-            </div>
-        @endif --}}
-
         @if (
             $current_tagihan &&
                 (strtolower($current_tagihan->status) === 'belum_bayar' || strtolower($current_tagihan->status) === 'ditolak'))
@@ -159,7 +204,8 @@
                         {{ $penghuni->no_kamar }}</span>
                 </div>
                 <div class="pt-2">
-                    <button @click="showProfileModal = true"
+                    <button
+                        @click="showProfileModal = true; $nextTick(() => { if(window.profilePhoneInput) window.profilePhoneInput.setNumber('+' + '{{ Auth::user()->no_hp }}'); });"
                         class="w-full py-2.5 border border-slate-800 hover:bg-slate-800/60 text-slate-300 text-xs font-bold rounded-xl transition cursor-pointer">
                         Edit Informasi Profil
                     </button>
@@ -224,53 +270,6 @@
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-800/40 text-xs font-medium">
-                        {{-- @forelse($riwayats as $row)
-                            @php $status = strtolower($row->status); @endphp
-                            <tr class="hover:bg-slate-800/20 text-slate-200 transition">
-                                <td class="px-5 py-3.5 font-bold text-slate-200">
-                                    {{ \Carbon\Carbon::parse($row->bulan_tagihan)->isoFormat('MMMM YYYY') }}
-                                </td>
-                                <td class="px-5 py-3.5 text-slate-500 text-[11px]">
-                                    {{ \Carbon\Carbon::parse($row->tgl_jatuh_tempo)->format('d/m/Y') }}
-                                </td>
-                                <td class="px-5 py-3.5 font-mono text-slate-200 font-extrabold">
-                                    Rp {{ number_format($row->jumlah_tagihan, 0, ',', '.') }}
-
-                                </td>
-                                <td class="px-5 py-3.5">
-                                    @if ($status === 'lunas')
-                                        <span
-                                            class="px-2.5 py-0.5 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[10px] font-bold rounded-full uppercase tracking-wide">Lunas</span>
-                                    @elseif($status === 'menunggu_validasi')
-                                        <span
-                                            class="px-2.5 py-0.5 bg-amber-500/10 text-amber-400 border border-amber-500/20 text-[10px] font-bold rounded-full uppercase tracking-wide">Diproses</span>
-                                    @else
-                                        <span
-                                            class="px-2.5 py-0.5 bg-rose-500/10 text-rose-400 border border-rose-500/20 text-[10px] font-bold rounded-full uppercase tracking-wide">Belum
-                                            Bayar</span>
-                                    @endif
-                                </td>
-                                <td class="px-5 py-3.5 text-center flex justify-center items-center">
-                                    @if ($status === 'belum_bayar')
-                                        <button
-                                            @click="
-                                                    uploadData.id = '{{ $row->id_tagihan }}';
-                                                    uploadData.bulan = '{{ \Carbon\Carbon::parse($row->bulan_tagihan)->isoFormat('MMMM YYYY') }}';
-                                                    showUploadModal = true;
-                                                "
-                                            class="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-[10px] font-bold rounded-lg transition cursor-pointer">
-                                            📤 Bayar
-                                        </button>
-                                    @elseif($status === 'menunggu_validasi')
-                                        <span
-                                            class="text-amber-500/80 text-[11px] font-medium italic inline-flex items-center space-x-1">
-                                            <span>⏳</span> <span>Audit Admin</span>
-                                        </span>
-                                    @else
-                                        <span class="text-emerald-400 text-base">🏆</span>
-                                    @endif
-                                </td>
-                            </tr> --}}
                         @forelse($riwayats as $row)
                             @php $status = strtolower($row->status); @endphp
                             <tr class="hover:bg-slate-800/20 text-slate-200 transition">
@@ -291,7 +290,6 @@
                                         <span
                                             class="px-2.5 py-0.5 bg-amber-500/10 text-amber-400 border border-amber-500/20 text-[10px] font-bold rounded-full uppercase tracking-wide">Diproses</span>
                                     @elseif($status === 'ditolak')
-                                        <!-- 🛠️ Tambahan badge jika ditolak admin -->
                                         <span
                                             class="px-2.5 py-0.5 bg-rose-500/10 text-rose-500 border border-rose-500/20 text-[10px] font-bold rounded-full uppercase tracking-wide">Ditolak</span>
                                     @else
@@ -302,7 +300,6 @@
                                 </td>
                                 <td class="px-5 py-3.5 text-center flex justify-center items-center">
                                     @if ($status === 'belum_bayar' || $status === 'ditolak')
-                                        <!-- 🛠️ Jika belum bayar ATAU ditolak, tampilkan tombol upload bukti -->
                                         <button
                                             @click="
                                                     uploadData.id = '{{ $row->id_tagihan }}';
@@ -335,6 +332,7 @@
         </div>
     </main>
 
+    <!-- MODAL UPLOAD BUKTI -->
     <div x-show="showUploadModal"
         class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm" x-cloak
         x-transition>
@@ -342,7 +340,6 @@
         <div @click.away="showUploadModal = false"
             class="bg-slate-800 border border-slate-700 w-full max-w-md rounded-xl overflow-hidden shadow-2xl">
 
-            {{-- Header --}}
             <div class="px-6 py-4 border-b border-slate-700 flex items-center justify-between">
                 <h4 class="text-xl font-black text-white">
                     Upload Bukti Transfer
@@ -353,7 +350,6 @@
                 </button>
             </div>
 
-            {{-- Form --}}
             <form action="{{ route('penghuni.tagihan.upload') }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 <input type="hidden" name="id_tagihan" :value="uploadData.id">
@@ -366,7 +362,6 @@
                         </p>
                     </div>
 
-                    {{-- Rekening --}}
                     <div class="bg-slate-900 border border-slate-700 rounded-lg p-6 text-center">
                         <p class="text-sm text-slate-500">
                             Silakan Transfer ke:
@@ -385,7 +380,6 @@
                         </p>
                     </div>
 
-                    {{-- Upload --}}
                     <div>
                         <label class="block text-sm font-semibold text-slate-400 mb-2">
                             Foto Bukti / Screenshot
@@ -398,14 +392,11 @@
                                 hover:file:bg-slate-600">
 
                         <small class="text-slate-500">
-                            Format:
-                            JPG / PNG / PDF.
-                            Maksimal 2 MB.
+                            Format: JPG / PNG / PDF. Maksimal 2 MB.
                         </small>
                     </div>
                 </div>
 
-                {{-- Footer --}}
                 <div class="border-t border-slate-700 px-6 py-4 flex justify-end gap-3">
 
                     <button type="button" @click="showUploadModal=false"
@@ -422,6 +413,7 @@
         </div>
     </div>
 
+    <!-- MODAL EDIT PROFIL -->
     <div x-show="showProfileModal"
         class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm" x-cloak
         x-transition>
@@ -433,8 +425,8 @@
                     class="text-slate-400 hover:text-white font-bold text-lg">&times;</button>
             </div>
 
-            <form action="{{ route('penghuni.profile.update') }}" method="POST" enctype="multipart/form-data"
-                class="space-y-4" x-data="{
+            <form id="formProfilePenghuni" action="{{ route('penghuni.profile.update') }}" method="POST"
+                enctype="multipart/form-data" class="space-y-4" x-data="{
                     avatarPreview: '{{ Auth::user()->foto ? asset('storage/' . Auth::user()->foto) : '' }}',
                     onAvatarChange(e) {
                         const file = e.target.files[0];
@@ -477,8 +469,13 @@
                             <label
                                 class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">No.
                                 HP (WhatsApp)</label>
-                            <input type="text" name="no_hp" value="{{ Auth::user()->no_hp }}" required
-                                class="w-full text-xs bg-slate-950 border border-slate-800 rounded-xl p-3 text-slate-200 focus:outline-none focus:border-blue-500 transition">
+                            <div
+                                class="relative rounded-xl bg-slate-950 border border-slate-800 focus-within:border-blue-500 transition">
+                                <input type="tel" id="profile_phone_input" required
+                                    class="w-full text-xs bg-slate-950 border border-slate-800 rounded-xl pr-4 py-3 text-slate-200 focus:outline-none focus:border-blue-500 transition">
+                                <input type="hidden" id="profile_full_phone" name="no_hp"
+                                    value="{{ Auth::user()->no_hp }}">
+                            </div>
                         </div>
                         <div>
                             <label
@@ -508,6 +505,49 @@
         </div>
     </div>
 
+    <!-- Script intl-tel-input -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/18.2.1/js/intl-tel-input.min.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const profilePhoneField = document.querySelector("#profile_phone_input");
+            const profileFullPhone = document.querySelector("#profile_full_phone");
+
+            if (profilePhoneField && window.intlTelInput) {
+                window.profilePhoneInput = window.intlTelInput(profilePhoneField, {
+                    initialCountry: "id",
+                    allowDropdown: true,
+                    separateDialCode: true,
+                    countrySearch: false,
+                    dropdownContainer: document.body,
+                    utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/18.2.1/js/utils.js"
+                });
+
+                // Set nilai awal jika user sudah memiliki no HP
+                if (profileFullPhone.value) {
+                    window.profilePhoneInput.setNumber('+' + profileFullPhone.value);
+                }
+
+                profilePhoneField.addEventListener("input", function() {
+                    let value = profilePhoneField.value;
+                    if (value.startsWith("0")) {
+                        profilePhoneField.value = value.substring(1);
+                    }
+                });
+
+                const form = document.querySelector("#formProfilePenghuni");
+                if (form) {
+                    form.addEventListener("submit", function() {
+                        let value = profilePhoneField.value;
+                        if (value.startsWith("0")) {
+                            profilePhoneField.value = value.substring(1);
+                        }
+                        const fullNumber = window.profilePhoneInput.getNumber().replace('+', '');
+                        profileFullPhone.value = fullNumber;
+                    });
+                }
+            }
+        });
+    </script>
 </body>
 
 </html>

@@ -2,6 +2,77 @@
 
 @section('title', 'Data Penghuni - SIMKTS')
 
+@push('styles')
+    <!-- CSS intl-tel-input (Lokal/CDN khusus Data Penghuni) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/18.2.1/css/intl-tel-input.css">
+    <style>
+        .iti {
+            width: 100% !important;
+            display: block !important;
+        }
+
+        .iti input[type="tel"] {
+            padding-left: 90px !important;
+        }
+
+        .iti__selected-flag {
+            background-color: transparent !important;
+            padding-left: 12px !important;
+        }
+
+        .iti__selected-dial-code {
+            color: #cbd5e1 !important;
+            font-size: 12px !important;
+            font-weight: 600 !important;
+        }
+
+        .iti__dropdown-content,
+        div.iti__dropdown-content,
+        .iti__country-list {
+            background-color: #0f172a !important;
+            color: #cbd5e1 !important;
+            border: none !important;
+        }
+
+        .iti__dropdown-content {
+            border: 1px solid #1e293b !important;
+            border-radius: 8px !important;
+            padding: 0 !important;
+            overflow: hidden !important;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5) !important;
+            top: 100% !important;
+            bottom: auto !important;
+            margin-top: 4px !important;
+        }
+
+        .iti__country-list {
+            z-index: 9999 !important;
+            width: 100% !important;
+            min-width: 300px !important;
+            max-height: 250px !important;
+            margin: 0 !important;
+        }
+
+        .iti__country {
+            padding: 8px 12px !important;
+        }
+
+        .iti__country:hover {
+            background-color: #1e293b !important;
+            color: #ffffff !important;
+        }
+
+        .iti__country-name,
+        .iti__dial-code {
+            color: #cbd5e1 !important;
+        }
+
+        .iti__search-container {
+            display: none !important;
+        }
+    </style>
+@endpush
+
 @section('content')
     <div class="space-y-6" x-data="{
         search: '',
@@ -81,7 +152,7 @@
                         icon: 'error',
                         background: '#0f172a',
                         color: '#fff',
-                        confirmButtonColor: '#ef4444' // Warna merah Rose-500
+                        confirmButtonColor: '#ef4444'
                     });
                 });
             </script>
@@ -172,7 +243,8 @@
                                             editForm.id_kamar_pilih = '{{ $row->id_kamar }}';
                                             editForm.tanggal_asli = '{{ $row->tgl_masuk }}';
                                             editForm.tanggal_tampil = '{{ $row->tgl_masuk }}';
-                                            showEditModal = true;"
+                                            showEditModal = true;
+                                            $nextTick(() => { if(window.editPhoneInput) window.editPhoneInput.setNumber('+' + '{{ $row->no_hp }}'); });"
                                         class="p-2 text-amber-400 hover:text-slate-950 bg-amber-500/10 hover:bg-amber-400 border border-amber-500/20 rounded-xl cursor-pointer transition">
                                         📝
                                     </button>
@@ -200,6 +272,7 @@
             </div>
         </div>
 
+        <!-- MODAL ADD PENGHUNI -->
         <div x-show="showAddModal"
             class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm" x-cloak
             x-transition>
@@ -212,7 +285,7 @@
                     <button @click="showAddModal = false"
                         class="text-slate-400 hover:text-white text-lg font-bold">&times;</button>
                 </div>
-                <form action="{{ route('admin.penghuni.store') }}" method="POST" class="space-y-4"
+                <form id="formAddPenghuni" action="{{ route('admin.penghuni.store') }}" method="POST" class="space-y-4"
                     x-data="{
                         tipeUser: 'baru',
                         selectedUserNama: '',
@@ -226,7 +299,6 @@
                         <div class="space-y-3">
                             <h6 class="text-xs font-black text-blue-400 uppercase tracking-wider">Data Pribadi</h6>
 
-                            <!-- Pilihan Opsi Kategori User -->
                             <div>
                                 <label
                                     class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">Kategori
@@ -249,7 +321,6 @@
                                 </div>
                             </div>
 
-                            <!-- Menu Pilihan Pengunjung Lama -->
                             <div x-show="tipeUser === 'lama'" x-transition>
                                 <label
                                     class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">Pilih
@@ -265,7 +336,6 @@
                                 </select>
                             </div>
 
-                            <!-- Input Nama Lengkap (Auto-fill & Lock jika User Lama) -->
                             <div>
                                 <label
                                     class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">Nama
@@ -285,13 +355,18 @@
                                 <input type="number" name="nik" required
                                     class="w-full text-xs bg-slate-950 border border-slate-800 rounded-xl p-3 text-slate-200 focus:outline-none focus:border-blue-500 transition">
                             </div>
+
                             <div class="grid grid-cols-2 gap-2">
                                 <div>
                                     <label
                                         class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">No.
                                         HP (WhatsApp)</label>
-                                    <input type="text" name="hp" required
-                                        class="w-full text-xs bg-slate-950 border border-slate-800 rounded-xl p-3 text-slate-200 focus:outline-none focus:border-blue-500 transition">
+                                    <div
+                                        class="relative rounded-xl bg-slate-950 border border-slate-800 focus-within:border-blue-500 transition">
+                                        <input type="tel" id="add_phone_input" required
+                                            class="w-full text-xs bg-slate-950 border border-slate-800 rounded-xl pr-4 py-3 text-slate-200 focus:outline-none focus:border-blue-500 transition">
+                                        <input type="hidden" id="add_full_phone" name="hp">
+                                    </div>
                                 </div>
                                 <div x-show="tipeUser === 'baru'">
                                     <label
@@ -341,13 +416,15 @@
                         <button type="button" @click="showAddModal = false"
                             class="px-4 py-2 text-xs font-semibold text-slate-400 hover:text-white transition">Batal</button>
                         <button type="submit"
-                            class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-full shadow-md shadow-blue-600/10 transition">Daftarkan
-                            Penghuni 🚀</button>
+                            class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-full shadow-md shadow-blue-600/10 transition">
+                            Daftarkan Penghuni 🚀
+                        </button>
                     </div>
                 </form>
             </div>
         </div>
 
+        <!-- MODAL EDIT PENGHUNI -->
         <div x-show="showEditModal"
             class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm" x-cloak
             x-transition>
@@ -361,7 +438,8 @@
                         class="text-slate-400 hover:text-white text-lg font-bold">&times;</button>
                 </div>
 
-                <form :action="'/admin/penghuni/' + editForm.id_penghuni" method="POST" class="space-y-4">
+                <form id="formEditPenghuni" :action="'/admin/penghuni/' + editForm.id_penghuni" method="POST"
+                    class="space-y-4">
                     @csrf
                     @method('PUT')
                     <input type="hidden" name="id_user" :value="editForm.id_user">
@@ -389,8 +467,12 @@
                                     <label
                                         class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">No.
                                         HP (WhatsApp)</label>
-                                    <input type="text" name="hp" x-model="editForm.hp" required
-                                        class="w-full text-xs bg-slate-950 border border-slate-800 rounded-xl p-3 text-slate-200 focus:outline-none focus:border-blue-500 transition">
+                                    <div
+                                        class="relative rounded-xl bg-slate-950 border border-slate-800 focus-within:border-blue-500 transition">
+                                        <input type="tel" id="edit_phone_input" required
+                                            class="w-full text-xs bg-slate-950 border border-slate-800 rounded-xl pr-4 py-3 text-slate-200 focus:outline-none focus:border-blue-500 transition">
+                                        <input type="hidden" id="edit_full_phone" name="hp" x-model="editForm.hp">
+                                    </div>
                                 </div>
                                 <div>
                                     <label
@@ -439,40 +521,97 @@
                         <button type="button" @click="showEditModal = false"
                             class="px-4 py-2 text-xs font-semibold text-slate-400 hover:text-white transition">Batal</button>
                         <button type="submit"
-                            class="px-5 py-2.5 bg-amber-500 hover:bg-amber-600 text-slate-950 text-xs font-black rounded-full shadow-md shadow-amber-500/10 transition">Update
-                            Data 💾</button>
+                            class="px-5 py-2.5 bg-amber-500 hover:bg-amber-600 text-slate-950 text-xs font-black rounded-full shadow-md shadow-amber-500/10 transition">
+                            Update Data 💾
+                        </button>
                     </div>
                 </form>
             </div>
         </div>
 
     </div>
+@endsection
 
+@push('scripts')
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/18.2.1/js/intl-tel-input.min.js"></script>
     <script>
-        document.addEventListener('click', function(e) {
-            const btnCheckout = e.target.closest('.btn-checkout');
-            if (btnCheckout) {
-                e.preventDefault();
-                Swal.fire({
-                    title: 'Check-out Penghuni?',
-                    text: "Status hunian penyewa ini akan dinonaktifkan, status kamar beralih kembali menjadi Kosong, dan role akun user diturunkan menjadi Pengunjung kembali.",
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#ef4444', // Rose-500
-                    cancelButtonColor: '#64748b', // Slate-500
-                    confirmButtonText: 'Ya, Check-out!',
-                    cancelButtonText: 'Batal',
-                    background: '#0f172a',
-                    color: '#fff',
-                    customClass: {
-                        popup: 'border border-slate-800 rounded-2xl shadow-2xl'
-                    }
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        btnCheckout.closest('form').submit();
-                    }
+        document.addEventListener("DOMContentLoaded", function() {
+            // 1. Inisialisasi intlTelInput Modal Add
+            const addPhoneField = document.querySelector("#add_phone_input");
+            const addFullPhone = document.querySelector("#add_full_phone");
+            if (addPhoneField && window.intlTelInput) {
+                const addPhoneInput = window.intlTelInput(addPhoneField, {
+                    initialCountry: "id",
+                    allowDropdown: true,
+                    separateDialCode: true,
+                    countrySearch: false,
+                    dropdownContainer: document.body,
+                    utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/18.2.1/js/utils.js"
+                });
+
+                addPhoneField.addEventListener("input", function() {
+                    if (addPhoneField.value.startsWith("0")) addPhoneField.value = addPhoneField.value
+                        .substring(1);
+                });
+
+                document.querySelector("#formAddPenghuni").addEventListener("submit", function() {
+                    if (addPhoneField.value.startsWith("0")) addPhoneField.value = addPhoneField.value
+                        .substring(1);
+                    addFullPhone.value = addPhoneInput.getNumber().replace('+', '');
                 });
             }
+
+            // 2. Inisialisasi intlTelInput Modal Edit
+            const editPhoneField = document.querySelector("#edit_phone_input");
+            const editFullPhone = document.querySelector("#edit_full_phone");
+            if (editPhoneField && window.intlTelInput) {
+                window.editPhoneInput = window.intlTelInput(editPhoneField, {
+                    initialCountry: "id",
+                    allowDropdown: true,
+                    separateDialCode: true,
+                    countrySearch: false,
+                    dropdownContainer: document.body,
+                    utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/18.2.1/js/utils.js"
+                });
+
+                editPhoneField.addEventListener("input", function() {
+                    if (editPhoneField.value.startsWith("0")) editPhoneField.value = editPhoneField.value
+                        .substring(1);
+                });
+
+                document.querySelector("#formEditPenghuni").addEventListener("submit", function() {
+                    if (editPhoneField.value.startsWith("0")) editPhoneField.value = editPhoneField.value
+                        .substring(1);
+                    editFullPhone.value = window.editPhoneInput.getNumber().replace('+', '');
+                });
+            }
+
+            // 3. SweetAlert Checkout
+            document.addEventListener('click', function(e) {
+                const btnCheckout = e.target.closest('.btn-checkout');
+                if (btnCheckout) {
+                    e.preventDefault();
+                    Swal.fire({
+                        title: 'Check-out Penghuni?',
+                        text: "Status hunian penyewa ini akan dinonaktifkan, status kamar beralih kembali menjadi Kosong, dan role akun user diturunkan menjadi Pengunjung kembali.",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#ef4444',
+                        cancelButtonColor: '#64748b',
+                        confirmButtonText: 'Ya, Check-out!',
+                        cancelButtonText: 'Batal',
+                        background: '#0f172a',
+                        color: '#fff',
+                        customClass: {
+                            popup: 'border border-slate-800 rounded-2xl shadow-2xl'
+                        }
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            btnCheckout.closest('form').submit();
+                        }
+                    });
+                }
+            });
         });
     </script>
-@endsection
+@endpush
